@@ -1,0 +1,41 @@
+% launch brainstorm, with no gui (but only if is not already running)
+if ~brainstorm('status')
+    brainstorm %nogui
+end
+
+%% SET PROTOCOL
+ProtocolName = 'Meghem_analisi_3';
+
+
+% get the protocol index, knowing the name
+iProtocol = bst_get('Protocol', ProtocolName);
+
+% set the current protocol
+gui_brainstorm('SetCurrentProtocol', iProtocol);
+
+% check info
+bst_get('ProtocolInfo')
+
+% get the subject list
+my_subjects = bst_get('ProtocolSubjects')
+
+
+%% SELECT  TRIALS
+% 
+mysFiles={'Second_Corr_Fast'}
+
+% make the first selection with bst process
+sFiles = bst_process('CallProcess', 'process_select_files_data', [], [], ...
+    'subjectname', 'All', ...
+    'tag',         mysFiles{1} );
+
+
+sel_sFiles=sel_bst_files(sFiles(:).FileName, '*', 'Avg');
+
+
+eval([mysFiles{1},'=sFiles']);
+
+
+
+
+

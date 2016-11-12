@@ -1,0 +1,16 @@
+%% group_by_subj_bst(FileNames, SubjectNames);
+% this function group a cell containing file names in a cell cotanining
+% several cells in which file 
+
+
+function sGroupBySubj = group_by_subj_bst(FileNames, SubjectNames);
+
+sGroupBySubj = {};
+for isubj=2:length(SubjectNames) % NOTE! 2 because the first subject is intra subject.
+    
+    curr_subj=SubjectNames(isubj);
+    curr_sFiles=sel_bst_files(my_sel_sFiles, curr_subj);
+    
+    sGroupBySubj{isubj-1}=curr_sFiles  % NOte the -1, in order to compensate for start from 2 in the loop?
+    
+end;
