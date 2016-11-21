@@ -5,7 +5,7 @@ end
 
 
 %% SET EXPORT FOLDER FOR REPORTS
-export_folder='/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_reports/Scout_Power';
+export_folder='/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_reports/Scout_ERS_ERD'
 
 
 %% SET PROTOCOL
@@ -28,9 +28,9 @@ my_subjects = bst_get('ProtocolSubjects')
 % 
 my_sFiles_string={'First_Corr_'}
 
-  for iCondition=1:length(my_sFiles_string)
+  for iCondition=1:length(mysFiles_string)
     % make the first selection with bst process
-    my_sFiles_ini = bst_process('CallProcess', 'process_select_files_data', [], [], ...
+    my_sFiles_ini = bst_process('CallProcess', 'process_select_files_timefreq', [], [], ...
         'subjectname', 'All', ...
         'includeintra',  0,...
         'tag',         my_sFiles_string{iCondition});
@@ -69,7 +69,7 @@ Subj_run{5}{3}=other_run;
 
 
 %% SEPARATE FILES BY CONDITION
-Conditions={'Fast18','Slow18'} 
+Conditions={'_Fast18','_Slow18'} 
 Subj_run_Condition={}
 
 for iSubj=1:length(Subj_grouped)
@@ -84,7 +84,7 @@ end;
 
 
 %% TIME-FREQUENCY ANALYSIS SCOUT LEVEL (SEPARATE FOR RUN).
-for iSubj=8:length(SubjectNames)
+for iSubj=2:length(SubjectNames)
     for irun=1:length(runs)
         for iCond=1:length(Conditions)
         curr_files=Subj_run_Condition{iSubj}{irun}{iCond};
@@ -126,23 +126,10 @@ for iSubj=8:length(SubjectNames)
                  'SaveKernel',      0), ...
             'normalize', 'none');  % None: Save non-standardized time-frequency maps
         
-       % Process: Add tag to comment.
+       % Process: Add tag: Prova
         Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
-            'tag',  [runs{irun} my_sFiles_string{1}, Conditions{iCond} ]  , ...
+            'tag',  [mysFiles{1}, Conditions{iCond}]   , ...
             'output', 1);  % Add to comment
-        
-        % Process: Add tag to name.
-        Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
-            'tag',  [runs{irun} my_sFiles_string{1}, Conditions{iCond} ]   , ...
-            'output', 2);  % Add to name
-     
-       
-        % add file info to the file
-        FileName = file_fullpath(Res(1).FileName);
-        FileMat.Add_info=link_files;
-            % Save file
-        bst_save(FileName, FileMat, 'v6', 1);
-
 
         % Save and export report
         ReportFile = bst_report('Save', Res);
