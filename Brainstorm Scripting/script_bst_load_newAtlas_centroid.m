@@ -22,7 +22,7 @@ my_subjects = bst_get('ProtocolSubjects')
 
 
 %% SUBJECT LOOP
-for iSubj=3:length(my_subjects.Subject);
+for iSubj=2:length(my_subjects.Subject);
 
     %% GET SUBJECT SURFACE
 

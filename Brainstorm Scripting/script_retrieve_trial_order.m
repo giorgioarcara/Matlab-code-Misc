@@ -5,7 +5,6 @@ end
 
 
 %% SET EXPORT FOLDER FOR REPORTS
-export_folder='/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_reports/Scout_Power';
 
 
 %% SET PROTOCOL
@@ -44,7 +43,7 @@ my_sel_sFiles=sel_files_bst({ my_sFiles_ini(:).FileName }, '.', 'average');
 my_sInputs = bst_process('GetInputStruct', my_sel_sFiles);
 
 % extract Filenams
-FileNames={sInputs.FileName};
+FileNames={my_sInputs.FileName};
 
 
 %% SEPARATE FILES FOR SUBJECT 
@@ -116,5 +115,6 @@ for iSubj=1:length(Subj_run);
             Subj_run_indices{iSubj}{irun}=indices;
         end;
 end;
+
 
 
