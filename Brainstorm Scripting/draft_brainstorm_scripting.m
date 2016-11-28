@@ -84,7 +84,7 @@ end;
 
 
 %% TIME-FREQUENCY ANALYSIS SCOUT LEVEL (SEPARATE FOR RUN).
-for iSubj=8:length(SubjectNames)
+for iSubj=1:length(SubjectNames)
     for irun=1:length(runs)
         for iCond=1:length(Conditions)
         curr_files=Subj_run_Condition{iSubj}{irun}{iCond};

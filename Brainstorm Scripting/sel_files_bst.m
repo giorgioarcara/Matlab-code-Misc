@@ -12,7 +12,7 @@
 %
 % Version: 12/11/2016
 
-function [selFiles] = sel_files_bst(sFilesNames, include_string, exclude_string)
+function [selFiles, selFiles_indices] = sel_files_bst(sFilesNames, include_string, exclude_string)
 
 incl_sFiles=regexpi(sFilesNames, include_string); %
 

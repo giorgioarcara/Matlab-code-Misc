@@ -45,7 +45,8 @@ my_sel_sFiles_ini = bst_process('CallProcess', 'process_select_files_timefreq', 
     'includeintra',  1, ...
     'includecommon', 0);
 
-    my_sel_sFiles={ my_sFiles_ini(:).FileName };
+
+my_sel_sFiles={ my_sel_sFiles_ini(:).FileName };
 
 
 

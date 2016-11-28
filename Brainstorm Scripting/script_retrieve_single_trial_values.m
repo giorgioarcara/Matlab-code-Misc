@@ -39,6 +39,11 @@ my_sFiles_ini = bst_process('CallProcess', 'process_select_files_timefreq', [], 
     'IncludeBad', 1);
 
 
+%% GROUP BY CONDITION
+my_group_strings={'COR', 'INC'}
+grouped_Cond = group_by_str_bst({my_sFiles_ini.FileName}, my_group_strings)
+
+
 
 % loop over trials and store the values in a single matrix.
 for i=1:length(my_sFiles_ini)

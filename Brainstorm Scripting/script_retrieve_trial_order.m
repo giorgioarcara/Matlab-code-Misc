@@ -110,11 +110,35 @@ for iSubj=1:length(Subj_run);
         for irun=1:length(runs);
             [~, ~, indices]=unique(Subj_run_times{iSubj}{irun}); 
             % note the use of unique. 
+            % this indices retrieve the ordinal position of the trials.
+            % for example [3, 15 indicates that the first trial in the list is the Third trial
+            % presented in the experiment, the second trial in the list was the
+            % number 15 presented in the experiment, and so on.
             % Taken From here http://stackoverflow.com/questions/18746759/assign-rank-to-numbers-in-a-vector. 
-            % the use of sort() is different
+            % the use of sort() is different.
             Subj_run_indices{iSubj}{irun}=indices;
         end;
 end;
 
+
+% save Subj_run_times, Subj_run_indices, Subj_run
+
+Subj_run_ordered=cell(1, length(Subj_run));
+for iSubj=1:length(Subj_run);
+    for irun=1:length(runs);
+        % the following use of sort retrive from the indices the
+        % corresponding mapping to trials run
+        % for example [35, 4,  indicates that the first trial to be put is
+        % the number 35, the second is the number 4.
+        % with this info, I can re-order the fileNames according to the
+        % actual presentation
+        [~, curr_indices]=sort(Subj_run_indices{iSubj}{irun}); % notice the use of sort.
+        Subj_run_ordered{iSubj}{irun}=Subj_run{iSubj}{irun}(curr_indices);
+    end;
+end;
+
+% save all relevant files
+cd('/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_easy_vs_hard')
+save('Subj_run.mat', 'Subj_run', 'Subj_run_times', 'Subj_run_indices', 'Subj_run_ordered')
 
 
