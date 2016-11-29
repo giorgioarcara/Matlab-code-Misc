@@ -44,7 +44,7 @@ my_sFiles_ini = bst_process('CallProcess', 'process_select_files_results', [], [
 
 my_sel_sFiles=sel_files_bst({ my_sFiles_ini(:).FileName }, 'average');
 my_sel_sFiles=sel_files_bst(my_sel_sFiles, 'First_Corr');
-my_sel_sFiles=sel_files_bst(my_sel_sFiles, '(low 40)');
+my_sel_sFiles=sel_files_bst(my_sel_sFiles, '(low)');
 
 
 
@@ -66,7 +66,7 @@ for iSubj=1:length(Subj_grouped)
 end;
 
 %% AVERAGE 3 RUN - Z-SCORE - EXTRACT time - PROJECT - SPATIAL SMHOOTHING
-for iSubj=1:2%length(SubjectNames)
+for iSubj=1%%length(SubjectNames)
         for iCond=1:length(Conditions)
          
             % select files
@@ -95,10 +95,36 @@ for iSubj=1:2%length(SubjectNames)
                 'timewindow', [-0.3, 0.6], ...
                 'overwrite',  1);
             
-           sc
-
-        bst_report('Export', ReportFile, [export_main_folder, '/', export_folder]);
+            Res = bst_process('CallProcess', 'process_project_sources', Res, [], ...
+                'headmodeltype', 'surface');  % Cortex surface
+            
+            ReportFile = bst_report('Save', Res);
+            % Process: Spatial smoothing (3.00,abs)
+            Res = bst_process('CallProcess', 'process_ssmooth_surfstat', Res, [], ...
+                'fwhm',       3, ...
+                'overwrite',  1, ...
+                'source_abs', 1);
+            
+             % Process: Add tag to comment.
+            Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
+            'tag',  ['whole']   , ...
+            'output', 1);  % Add to comment
         
+          % Process: Add tag to comment.
+            Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
+            'tag',  [ '_whole_', Conditions{iCond}]   , ...
+            'output', 2);  % Add to name
+            
+            
+            % add file info to the file
+            FileName = file_fullpath(Res(1).FileName);
+            FileMat.Add_info=curr_files;
+            % Save file
+            bst_save(FileName, FileMat, 'v6', 1);
+            
+            
+            bst_report('Export', ReportFile, [export_main_folder, '/', export_folder]);
+            
         end;
     end;
 

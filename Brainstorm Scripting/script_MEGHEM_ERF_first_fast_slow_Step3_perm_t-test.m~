@@ -46,14 +46,12 @@ my_sFiles_ini = bst_process('CallProcess', 'process_select_files_results', [], [
 Conditions={'Fast18', 'Slow18'};
 
 Condition_grouped=group_by_str_bst( {my_sFiles_ini.FileName}, Conditions);
-Condition_grouped{1}=sort_by_fragment(Condition_grouped{1}, 'MH0..');
-Condition_grouped{2}=sort_by_fragment(Condition_grouped{2}, 'MH0..');
 
 % Start a new report
-bst_report('Start', Condition_grouped{1});
+bst_report('Start', sFiles);
 
 % Process: Perm t-test paired [0ms,100ms]          H0:(A=B), H1:(A<>B)
-Res = bst_process('CallProcess', 'process_test_permutation2p', Condition_grouped{1},  Condition_grouped{2}, ...
+sFiles = bst_process('CallProcess', 'process_test_permutation2p', sFiles, sFiles2, ...
     'timewindow',     [0, 0.1], ...
     'scoutsel',       {}, ...
     'scoutfunc',      1, ...  % Mean
@@ -66,7 +64,8 @@ Res = bst_process('CallProcess', 'process_test_permutation2p', Condition_grouped
     'tail',           'two');  % Two-tailed
 
 % Save and display report
-ReportFile = bst_report('Save', Res);
-bst_report('Export', ReportFile, [export_main_folder, export_folder]);
+ReportFile = bst_report('Save', sFiles);
+bst_report('Open', ReportFile);
+bst_report('Export', ReportFile, ExportDir);
 
 
