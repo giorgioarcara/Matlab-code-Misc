@@ -36,7 +36,7 @@ my_subjects = bst_get('ProtocolSubjects')
 my_sFiles_string='Second_Corr'
 
 % make the first selection with bst process
-my_sFiles_ini = bst_process('CallProcess', 'process_select_files_results', [], [], ...
+my_sFiles_ini = bst_process('CallProcess', 'process_select_files_timefreq', [], [], ...
     'subjectname', 'Group_analysis', ...
     'includeintra',  1,...
     'tag',         my_sFiles_string);
@@ -46,26 +46,38 @@ my_sFiles_ini = bst_process('CallProcess', 'process_select_files_results', [], [
 Conditions={'Fast18', 'Slow18'};
 
 Condition_grouped=group_by_str_bst( {my_sFiles_ini.FileName}, Conditions);
+Condition_grouped{1}=sort_by_fragment(Condition_grouped{1}, 'MH0..');
+Condition_grouped{2}=sort_by_fragment(Condition_grouped{2}, 'MH0..');
 
 % Start a new report
-bst_report('Start', sFiles);
+bst_report('Start', Condition_grouped{1});
 
-% Process: Perm t-test paired [0ms,100ms]          H0:(A=B), H1:(A<>B)
-sFiles = bst_process('CallProcess', 'process_test_permutation2p', sFiles, sFiles2, ...
-    'timewindow',     [0, 0.1], ...
-    'scoutsel',       {}, ...
-    'scoutfunc',      1, ...  % Mean
-    'isnorm',         0, ...
-    'avgtime',        1, ...
-    'iszerobad',      1, ...
-    'Comment',        '', ...
-    'test_type',      'ttest_paired', ...  % Paired Student's t-test T = mean(A-B) / std(A-B) * sqrt(n)
-    'randomizations', 1000, ...
-    'tail',           'two');  % Two-tailed
 
-% Save and display report
-ReportFile = bst_report('Save', sFiles);
-bst_report('Open', ReportFile);
-bst_report('Export', ReportFile, ExportDir);
+%% DEFINE INTERVALS TO BE ANALIZED
+intervals={[0.1 0.2], [0.2 0.3], [0.3 0.4]}
+
+
+for i=1:length(intervals)
+ % Process: FT t-test paired cluster [0ms,200ms]          H0:(A=B), H1:(A<>B)
+ 
+ 
+ 
+ Res = bst_process('CallProcess', 'process_ft_sourcestatistics', Condition_grouped{1}, Condition_grouped{2}, ...
+     'timewindow',     [0.1, 0.2], ...
+     'scoutsel',       {}, ...
+     'scoutfunc',      1, ...  % Mean
+     'isabs',          0, ...
+     'avgtime',        1, ...
+     'randomizations', 1000, ...
+     'statistictype',  2, ...  % Paired t-test
+     'tail',           'two', ...  % Two-tailed
+     'correctiontype', 2, ...  % cluster
+     'minnbchan',      1, ...
+     'clusteralpha',   0.05);
+
+    % Save and display report
+    ReportFile = bst_report('Save', Res);
+    bst_report('Export', ReportFile, [export_main_folder, export_folder]);
+end;
 
 

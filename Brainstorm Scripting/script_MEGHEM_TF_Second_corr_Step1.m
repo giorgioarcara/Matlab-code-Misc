@@ -5,9 +5,9 @@ end
 
 
 %% SET EXPORT FOLDER FOR REPORTS
-export_main_folder='/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_reports/';
-export_folder1='TF_Second'
-export_folder2='Second_runAve_ERSERD'
+export_main_folder='/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_reports';
+export_folder1='TF_Second_import_Hilbert'
+export_folder2='TF_Second_runAve_ERSERD'
 
 if ~exist([export_main_folder, '/' export_folder1])
     mkdir([export_main_folder, '/' export_folder1]) % create folder if it does not exist
@@ -96,105 +96,136 @@ my_tag={'Second_corr_Fast18', 'Second_Corr_Slow18'};
         
 
 %% TIME-FREQUENCY ANALYSIS WHOLE-BRAIN (SEPARATE FOR RUN).
-for iSubj=1%:2%length(SubjectNames)
+
+for iSubj=14:length(SubjectNames)
     for iCond=1:length(Conditions)
         
         files_info={}; % initialize a cell to store info of files entered in the average
+        make_run_ave=1; % initialize flag for run average.
         
         for irun=1:length(runs)
             
-            % I select the epochs around the event First
-            curr_files=Subj_Condition_run{iSubj}{iCond}{irun};
-            
-            bst_report('Start', curr_files);
-            
-            % first I import the file epoched aroung the event Second.
-            % Process: Import MEG/EEG: Events
-            curr_files_2 = bst_process('CallProcess', 'process_import_data_event', curr_files, [], ...
-                'subjectname', SubjectNames{1}, ...
-                'condition',   '', ...
-                'eventname',   my_tag{iCond}, ... % notice I use my_tag for selection, but Conditions for determining the loop
-                'timewindow',  [-2, 3.7], ...
-                'epochtime',   [-2.5, 2.5], ...
-                'createcond',  0, ...
-                'ignoreshort', 1, ...
-                'usectfcomp',  1, ...
-                'usessp',      1, ...
-                'freq',        [], ...
-                'baseline',    [-0.3, 0]);
-            
-            
-            %% RETRIEVE SOURCE (LINK) FILES AROUND SECOND EVENTS
-            % retrieve condition path
-            curr_study=bst_get('StudyWithCondition', bst_fileparts(curr_files_2(1).FileName));
-            
-            % exclude with the following steps the empty filenames, in the
-            % ResultFile, otherwise cannot use intersect
-            no_empty_DataFile_ind=find(~cellfun(@isempty, {curr_study.Result.DataFile}));
-            no_empty_Resultfile=curr_study.Result(no_empty_DataFile_ind);
-            
-            % find intersection between curr-files (the data to be processed)
-            % and the non-empty Resultfile names
-            [a ind_curr_files ind_no_empty_Resultfile]=intersect({curr_files_2.FileName}, {no_empty_Resultfile.DataFile});
-            
-            % retrieve link_files
-            link_files={no_empty_Resultfile(ind_no_empty_Resultfile).FileName};
-            
-            
-            % Start a new report
-            bst_report('Start', link_files);
-            
-            
-            % Process: Hilbert transform
-            Res = bst_process('CallProcess', 'process_hilbert', link_files, [], ...
-                'clusters',  {}, ...
-                'scoutfunc', 1, ...  % Mean
-                'edit',      struct(...
-                'Comment',         'Avg,Power', ...
-                'TimeBands',       [], ...
-                'Freqs',           {{'theta', '5, 7', 'mean'; 'alpha', '8, 12', 'mean'}}, ...
-                'ClusterFuncTime', 'none', ...
-                'Measure',         'power', ...
-                'Output',          'average', ...
-                'RemoveEvoked',    0, ...
-                'SaveKernel',      0), ...
-                'normalize', 'none', ...  % None: Save non-standardized time-frequency maps
-                'mirror',    0);
-            
-            % Process: Add tag to comment.
-            Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
-                'tag',  [runs{irun}, my_tag{1}, Conditions{iCond} ]  , ... %% !! NOTICE: here I use my_tag
-                'output', 1);  % Add to comment
-            
-            % Process: Add tag to name.
-            Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
-                'tag',  [runs{irun}, my_tag{1}, Conditions{iCond} ]   , ...  %% !! NOTICE: here I use my_tag
-                'output', 2);  % Add to name
-            
-            % create the struct at the first loop.
-            % update the struct at all the other loops.
-            if (irun==1)
-                run_files=Res;
-            else
-                run_files(irun)=Res;
+            try
+                % I select the epochs around the event First
+                curr_files=Subj_Condition_run{iSubj}{iCond}{irun};
+                
+                bst_report('Start', curr_files);
+                
+                % first I import the file epoched aroung the event Second.
+                % Process: Import MEG/EEG: Events
+                curr_files_1 = bst_process('CallProcess', 'process_import_data_event', curr_files, [], ...
+                    'subjectname', SubjectNames{1}, ...
+                    'condition',   '', ...
+                    'eventname',   my_tag{iCond}, ... % notice I use my_tag for selection, but Conditions for determining the loop
+                    'timewindow',  [-2, 3.7], ...
+                    'epochtime',   [-2.5, 2.5], ...
+                    'createcond',  0, ...
+                    'ignoreshort', 1, ...
+                    'usectfcomp',  1, ...
+                    'usessp',      1, ...
+                    'freq',        [], ...
+                    'baseline',    [-0.3, 0]);
+                
+                % check the epoch time and exclude shorter epochs
+                
+                epochs_length_check=zeros(length(curr_files_1), 1);
+                
+                for (iEpoch=1:length(curr_files_1))
+                    % get the reference length from the first trial
+                    if (iEpoch==1)
+                        epoch_Times=in_bst_data(curr_files_1(iEpoch).FileName, 'Time');
+                        epoch_length=length(epoch_Times.Time);
+                        epoch_ref=epoch_length;
+                    end;
+                    
+                    % get the length of epoch
+                    epoch_Times=in_bst_data(curr_files_1(iEpoch).FileName, 'Time');
+                    epoch_length=length(epoch_Times.Time);
+                    
+                    % compare with reference
+                    epochs_length_check(iEpoch)=epoch_length==epoch_ref;
+                end
+                
+                
+                % now select only good trials
+                curr_files_2 = curr_files_1(logical(epochs_length_check));
+                
+                
+                %% RETRIEVE SOURCE (LINK) FILES AROUND SECOND EVENTS
+                % retrieve condition path
+                curr_study=bst_get('StudyWithCondition', bst_fileparts(curr_files_2(1).FileName));
+                
+                % exclude with the following steps the empty filenames, in the
+                % ResultFile, otherwise cannot use intersect
+                no_empty_DataFile_ind=find(~cellfun(@isempty, {curr_study.Result.DataFile}));
+                no_empty_Resultfile=curr_study.Result(no_empty_DataFile_ind);
+                
+                % find intersection between curr-files (the data to be processed)
+                % and the non-empty Resultfile names
+                [a ind_curr_files ind_no_empty_Resultfile]=intersect({curr_files_2.FileName}, {no_empty_Resultfile.DataFile});
+                
+                % retrieve link_files
+                link_files={no_empty_Resultfile(ind_no_empty_Resultfile).FileName};
+                
+                
+                
+                % Process: Hilbert transform
+                Res = bst_process('CallProcess', 'process_hilbert', link_files, [], ...
+                    'clusters',  {}, ...
+                    'scoutfunc', 1, ...  % Mean
+                    'edit',      struct(...
+                    'Comment',         'Avg,Power', ...
+                    'TimeBands',       [], ...
+                    'Freqs',           {{'theta', '5, 7', 'mean'; 'alpha', '8, 12', 'mean'}}, ...
+                    'ClusterFuncTime', 'none', ...
+                    'Measure',         'power', ...
+                    'Output',          'average', ...
+                    'RemoveEvoked',    0, ...
+                    'SaveKernel',      0), ...
+                    'normalize', 'none', ...  % None: Save non-standardized time-frequency maps
+                    'mirror',    0);
+                
+                % Process: Add tag to comment.
+                Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
+                    'tag',  [runs{irun}, my_tag{iCond} ]  , ... %% !! NOTICE: here I use my_tag
+                    'output', 1);  % Add to comment
+                
+                % Process: Add tag to name.
+                Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
+                    'tag',  [runs{irun}, my_tag{iCond} ]   , ...  %% !! NOTICE: here I use my_tag
+                    'output', 2);  % Add to name
+                
+                % create the struct at the first loop.
+                % update the struct at all the other loops.
+                if (irun==1)
+                    run_files=Res;
+                else
+                    run_files(irun)=Res;
+                end;
+                
+                % create cell with link_files to be stored as info
+                files_info{irun}=link_files;
+                
+                % Save and export report
+                ReportFile = bst_report('Save', Res);
+                bst_report('Export', ReportFile,  [export_main_folder, '/', export_folder1]);
+                
+                % delete Second Files to save storage space
+                
+                % Process: Delete selected files (delete the imported epoch in the
+                % first step, to save space).
+                Del = bst_process('CallProcess', 'process_delete', curr_files_2, [], ...
+                    'target', 1);  % Delete selected files
+                
+            catch
+                Warning(['Problems with Subject: ', num2str(iSubj), '; Conditions: ', num2str(iCond), '; run: ',  num2str(irun)]);
+                make_run_ave=0;
             end;
             
-            % create cell with link_files to be stored as info
-            files_info{irun}=link_files;
-            
-            % Save and export report
-            ReportFile = bst_report('Save', Res);
-            bst_report('Export', ReportFile,  [export_main_folder, '/', export_folder1]);
-            
-            % delete Second Files to save storage space
-            
-            % Process: Delete selected files (delete the imported epoch in the
-            % first step, to save space).
-            Del = bst_process('CallProcess', 'process_delete', curr_files_2, [], ...
-                'target', 1);  % Delete selected files
             
         end;
         
+        if make_run_ave
         % start second report
         bst_report('Start', run_files);
         
@@ -202,10 +233,10 @@ for iSubj=1%:2%length(SubjectNames)
         %% STEP 1) RUN AVERAGE
         % Process: Average: Everything
         Res = bst_process('CallProcess', 'process_average', run_files, [], ...
-            'avgtype',   2, ...  % By subject
+            'avgtype',   1, ...  % everything
             'avg_func',  1, ...  % Arithmetic average:  mean(x)
-            'weighted',  0, ...
-            'matchrows', 1, ...
+            'weighted',  1, ...
+            'matchrows', 0, ...
             'iszerobad', 1);
         
         % Process: Add tag to name.
@@ -218,7 +249,6 @@ for iSubj=1%:2%length(SubjectNames)
             'tag',  [ ' | whole | ', my_tag{iCond}]   , ...
             'output', 1);  % Add to comment
         
-        Res_to_del=Res;
         
         %% STEP 2) ERS/ERD
         % Process: Event-related perturbation (ERS/ERD): [-500ms,-300ms]
@@ -240,19 +270,14 @@ for iSubj=1%:2%length(SubjectNames)
         
         % Process: Delete selected files (delete the imported epoch in the
         % first step, to save space).
-        Res_to_del = bst_process('CallProcess', 'process_delete', Res_to_del, [], ...
-            'target', 1);  % Delete selected files
-                
-        % Save and export report
-        ReportFile = bst_report('Save', Res);
-        bst_report('Export', ReportFile,  [export_main_folder, '/', export_folder2]);
-        
-        
-        % Process: Delete selected files (delete the imported epoch in the
-        % first step, to save space).
         Del = bst_process('CallProcess', 'process_delete', run_files, [], ...
             'target', 1);  % Delete selected files
         
+        
+        % Save and export report
+        ReportFile = bst_report('Save', Res);
+        bst_report('Export', ReportFile,  [export_main_folder, '/', export_folder2]);
+        end;
         
     end;
 end;
