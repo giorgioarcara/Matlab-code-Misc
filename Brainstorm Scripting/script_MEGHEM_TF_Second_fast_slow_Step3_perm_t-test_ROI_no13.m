@@ -34,6 +34,7 @@ my_subjects = bst_get('ProtocolSubjects')
 SubjectNames={my_subjects.Subject(2:end).Name}; % NOTE! the 2-end, to exclude the intra trials
 
 
+
 %% SELECT  TRIALS
 % 
 my_sFiles_string='Second_Corr'
@@ -44,11 +45,17 @@ my_sFiles_ini = bst_process('CallProcess', 'process_select_files_timefreq', [], 
     'includeintra',  1,...
     'tag',         my_sFiles_string);
 
+% exclude subject 13 from filenames
+my_sFiles_names=sel_files_bst({my_sFiles_ini.FileName}, '.', 'MH013');
+% exclude subject 13 from Subject names
+SubjectNames=sel_files_bst(SubjectNames, '.', 'MH013'); % NOTE! the 2-end, to exclude the intra trials
+
+
 
 %% DIVIDE BY CONDITION
 Conditions={'Fast18', 'Slow18'};
 
-Condition_grouped=group_by_str_bst( {my_sFiles_ini.FileName}, Conditions);
+Condition_grouped=group_by_str_bst( my_sFiles_names, Conditions);
 Condition_grouped{1}=sort_by_fragment(Condition_grouped{1}, 'MH0..');
 Condition_grouped{2}=sort_by_fragment(Condition_grouped{2}, 'MH0..');
 
@@ -64,9 +71,15 @@ Freq_names={'theta' 'alpha'};
 % I can use the permutation function for sources (that allows to specify
 % scouts).
 
-for iFreq=1:length(Freqs);
+% CHECK consistency for paired t-test
+if length(Condition_grouped{1}) ~= length(Condition_grouped{2})
+     error('There is an inconsistency in dimensons of Condition_gropued{1} and {2}');
+end;
+
+
+for iFreq=1%:length(Freqs);
     for iCond=1:length(Conditions);
-        for iSubj=1:length(SubjectNames);
+        for iSubj=1:length(Condition_grouped{1});
              
             %% IN this loop I extract values separately for each subject
             % this is necessary cause extract values try always to
@@ -105,7 +118,7 @@ for iFreq=1:length(Freqs);
             % Process: Perm t-test paired [0ms, 400ms]          H0:(A=B), H1:(A<>B)
             Res = bst_process('CallProcess', 'process_test_permutation2p', extract_all_files{1},  extract_all_files{2}, ...
                 'timewindow',     [0, 0.4], ...
-                'scoutsel',       {'Destrieux', {'G_temporal_middle R', 'G_temporal_middle L', 'G_front_middle L', 'G_front_middle R', 'G_pariet_inf-Angular L', 'G_pariet_inf-Angular R', 'G_pariet_inf-Supramar L', 'G_pariet_inf-Supramar R', 'S_intrapariet_and_P_trans L', 'S_intrapariet_and_P_trans R'}}, ...
+                'scoutsel',       {'Destrieux', {'G_temporal_middle R', 'G_temporal_middle L', 'G_front_middle L', 'G_front_middle R', 'G_pariet_inf-Angular L', 'G_pariet_inf-Angular R', 'G_pariet_inf-Supramar L', 'G_pariet_inf-Supramar R', 'G_parietal_sup L', 'G_parietal_sup R', 'S_intrapariet_and_P_trans L', 'S_intrapariet_and_P_trans R'}}, ...
                 'scoutfunc',      1, ...  % Mean
                 'isnorm',         0, ...
                 'avgtime',        0, ...
@@ -116,7 +129,14 @@ for iFreq=1:length(Freqs);
                 'tail',           'two');  % Two-tailed
             
             
+             % Process: Add tag to name.
+            Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
+                'tag',  ['no MH013']   , ...
+                'output', 2);  % Add to name
             
+              Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
+                'tag',  ['no MH013']   , ...
+                'output', 1);  % Add to comment
             
             %export_matlab(Res, %% Cannot USE DELETE PROCESS TO DELETE (due to a probable bug)
             % also the results of the perm-test is deleted. I should add here some lines to delete manually the files 

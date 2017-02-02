@@ -154,13 +154,15 @@ for iSubj=1:length(SubjectNames)
         curr_test_filt=curr_test>test_steps(istep_test);
         
         for istep_retest=1:length(retest_steps)
-            
-            
+                   
             
             % filter with threshold the retest
             curr_retest_filt=curr_retest>retest_steps(istep_retest);
             
             
+            tic
+            a=meshgrid(curr_test, curr_retest);
+            toc
             %  use notation of Stevens et al. 2014 (p. 314, Fig 1).
             % A12 = voxel active in both test and retest
             % A2 = false positive: voxel active in retest not active in test

@@ -155,6 +155,13 @@ end;
     curr_retest_filt_vec=curr_retest_rep>retest_sorted_rep;
     curr_retest_filt_mat=reshape(curr_retest_filt_vec, length(curr_retest), length(curr_retest));
     
+    
+    %% PROVA NON RIUSCITA
+%     tic
+%     prova=meshgrid(curr_test_filt_vec(1:end/2), curr_retest_filt_vec(1:end/2));
+%     toc
+
+    
     % the following objects are not necessary, but help me to think about
     % the problem.
     TPR_test=zeros(length(curr_test_mat), length(curr_test_mat));
@@ -166,6 +173,21 @@ end;
     AUC_test=zeros(1, length(TPR_test));
     AUC_retest=zeros(1, length(TPR_retest));
     
+    all_comparisons=zeros(curr_test)
+    
+    
+    tic
+    for itest=1:length(curr_test);
+        curr_test_filt_vec=curr_test > test_sorted(itest);
+        for iretest=1:length(curr_retest);
+            curr_retest_filt_vec=curr_retest > retest_sorted;
+            all_comparisons = curr_test_filt+curr_retest_filt;
+            
+        end;
+    end;
+    toc
+    
+        
   
     %  use notation of Stevens et al. 2014 (p. 314, Fig 1).
     % A12 = voxel active in both test and retest
