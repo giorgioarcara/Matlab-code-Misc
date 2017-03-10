@@ -66,6 +66,7 @@ Condition_grouped{2}(:)
 % Start a new report
 bst_report('Start', Condition_grouped{1});
 
+
 % Process: t-test paired [-2.000s,3.700s 1-150Hz]          H0:(A=B), H1:(A<>B)
 Res = bst_process('CallProcess', 'process_test_parametric2p', Condition_grouped{1}, Condition_grouped{2}, ...
     'timewindow',    [-2, 2], ...
@@ -82,7 +83,5 @@ Res = bst_process('CallProcess', 'process_test_parametric2p', Condition_grouped{
 
 % Save and display report
 ReportFile = bst_report('Save', Res);
-bst_report('Open', Res);
-% bst_report('Export', ReportFile, ExportDir);
 
     

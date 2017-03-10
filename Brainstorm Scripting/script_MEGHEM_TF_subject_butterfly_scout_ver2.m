@@ -86,7 +86,7 @@ for iCond=1:length(Conditions);
         
         
         %% !!! WARNING: I had to add an increasing indices, because of a bug in brainstorm
-        % (the ROI were overwritten).
+        % (the ROI were overwritten because of the same name).
         % Process: Add tag to name.
         Res = bst_process('CallProcess', 'process_add_tag', Res, [], ...
             'tag',  ['_', Conditions{iCond}, my_tag, num2str(ind)] , ...

@@ -7,6 +7,11 @@ To avoid confusion with internal brainstorm functions, that sometimes are preced
 "bst" (eg., "bst_get", "bst_set", ,etc.), 
 I put "bst" at the end of my function names (e.g. "group_by_str_bst").
 
-All functions ar provided without any warranty (as usual).
+Most of the scripts are just general scripts I developed to tackle specific problems with brainstorm.
+All scripts refers to a dummy dataset of mine. But the solution are general (for example how to extract scout time series for 
+Time frequency data and analyze them)
+
+
+All functions ar provided without any warranty.
 
 Giorgio Arcara
