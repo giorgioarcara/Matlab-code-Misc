@@ -12,7 +12,8 @@ function Pos = import_pos(filename)
 myfid=fopen(filename);
 
 % fgetl get each line one at time
-% the first line of the .pos contains the number of subsequent lines
+% the first line of the .pos contains the number of subsequent lines.
+% (this is a peculiarity of the .pos file).
 % with the first call to fgetl, I get the total number of lines.
 
 tline=fgetl(myfid);

@@ -1,0 +1,371 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>script_MEGHEM_TF_Second_fast_slow_Step3a_resample_perm_t-test</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-04-01"><meta name="DC.source" content="script_MEGHEM_TF_Second_fast_slow_Step3a_resample_perm_t-test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">SET EXPORT FOLDER FOR REPORTS</a></li><li><a href="#3">SET PROTOCOL</a></li><li><a href="#4">SELECT  TRIALS</a></li><li><a href="#5">DIVIDE BY CONDITION</a></li><li><a href="#9">IN this loop I extract values separately for each subject</a></li><li><a href="#11">delete manually all files</a></li></ul></div><pre class="codeinput"><span class="comment">% launch brainstorm, with no gui (but only if is not already running)</span>
+<span class="keyword">if</span> ~brainstorm(<span class="string">'status'</span>)
+    brainstorm <span class="comment">%nogui</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error using evalin
+Undefined function or variable 'script_MEGHEM_TF_Second_fast_slow_Step3a_resample_perm_t'.
+</pre><h2>SET EXPORT FOLDER FOR REPORTS<a name="2"></a></h2><pre class="codeinput">export_main_folder=<span class="string">'/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_reports/'</span>;
+export_folder=<span class="string">'resample'</span>;
+
+
+<span class="keyword">if</span> ~exist([export_main_folder, <span class="string">'/'</span> export_folder])
+    mkdir([export_main_folder, <span class="string">'/'</span> export_folder]) <span class="comment">% create folder if it does not exist</span>
+<span class="keyword">end</span>;
+</pre><h2>SET PROTOCOL<a name="3"></a></h2><pre class="codeinput">ProtocolName = <span class="string">'Meghem_analisi_3'</span>;
+
+<span class="comment">% get the protocol index, knowing the name</span>
+iProtocol = bst_get(<span class="string">'Protocol'</span>, ProtocolName);
+
+<span class="comment">% set the current protocol</span>
+gui_brainstorm(<span class="string">'SetCurrentProtocol'</span>, iProtocol);
+
+<span class="comment">% check info</span>
+ProtocolInfo=bst_get(<span class="string">'ProtocolInfo'</span>)
+
+<span class="comment">% get the subject list</span>
+my_subjects = bst_get(<span class="string">'ProtocolSubjects'</span>)
+
+
+SubjectNames={my_subjects.Subject(2:end).Name}; <span class="comment">% NOTE! the 2-end, to exclude the intra trials</span>
+</pre><h2>SELECT  TRIALS<a name="4"></a></h2><pre class="codeinput">my_sFiles_string=<span class="string">'Second_Corr'</span>
+
+<span class="comment">% make the first selection with bst process</span>
+my_sFiles_ini = bst_process(<span class="string">'CallProcess'</span>, <span class="string">'process_select_files_timefreq'</span>, [], [], <span class="keyword">...</span>
+    <span class="string">'subjectname'</span>, <span class="string">'Group_analysis'</span>, <span class="keyword">...</span>
+    <span class="string">'includeintra'</span>,  1,<span class="keyword">...</span>
+    <span class="string">'tag'</span>,         my_sFiles_string);
+</pre><h2>DIVIDE BY CONDITION<a name="5"></a></h2><pre class="codeinput">Conditions={<span class="string">'Fast18'</span>, <span class="string">'Slow18'</span>};
+
+Condition_grouped=group_by_str_bst( {my_sFiles_ini.FileName}, Conditions);
+Condition_grouped{1}=sort_by_fragment(Condition_grouped{1}, <span class="string">'MH0..'</span>);
+Condition_grouped{2}=sort_by_fragment(Condition_grouped{2}, <span class="string">'MH0..'</span>);
+</pre><p>set frequencies</p><pre class="codeinput">Freqs={[5 7]; [8 12]};
+Freq_names={<span class="string">'theta'</span> <span class="string">'alpha'</span>};
+
+<span class="comment">% NOTE: to make permutation on ROI i first extract values, isolating one</span>
+<span class="comment">% frequency.</span>
+<span class="comment">% in this way, results for one frequency are treated as a source object and</span>
+<span class="comment">% I can use the permutation function for sources (that allows to specify</span>
+<span class="comment">% scouts).</span>
+
+<span class="keyword">for</span> iFreq=1:length(Freqs);
+</pre><pre class="codeinput">    <span class="keyword">for</span> iCond=1:length(Conditions);
+        <span class="keyword">for</span> iSubj=1:length(SubjectNames);
+</pre><h2>IN this loop I extract values separately for each subject<a name="9"></a></h2><p>this is necessary cause extract values try always to concatenate time or subjects. Only using just on subject at the time I obtain what I want. a Process: Extract values: [-300ms,600ms] 5-7Hz</p><pre class="codeinput">            curr_file = bst_process(<span class="string">'CallProcess'</span>, <span class="string">'process_extract_values'</span>, Condition_grouped{iCond}{iSubj}, [], <span class="keyword">...</span>
+                <span class="string">'timewindow'</span>, [-0.3, 0.6], <span class="keyword">...</span>
+                <span class="string">'freqrange'</span>,  [Freqs{iFreq}(1), Freqs{iFreq}(2)], <span class="keyword">...</span>
+                <span class="string">'rows'</span>,       <span class="string">''</span>, <span class="keyword">...</span>
+                <span class="string">'isabs'</span>,      0, <span class="keyword">...</span>
+                <span class="string">'avgtime'</span>,    0, <span class="keyword">...</span>
+                <span class="string">'avgrow'</span>,     0, <span class="keyword">...</span>
+                <span class="string">'avgfreq'</span>,    0, <span class="keyword">...</span>
+                <span class="string">'matchrows'</span>,  0, <span class="keyword">...</span>
+                <span class="string">'dim'</span>,        2, <span class="keyword">...</span><span class="comment">  % Concatenate time (dimension 2)</span>
+                <span class="string">'Comment'</span>,    <span class="string">''</span>);
+
+            <span class="comment">% Process: Resample: 300Hz</span>
+            curr_file = bst_process(<span class="string">'CallProcess'</span>, <span class="string">'process_resample'</span>, curr_file, [], <span class="keyword">...</span>
+                <span class="string">'freq'</span>,      300, <span class="keyword">...</span>
+                <span class="string">'overwrite'</span>, 1);
+
+            <span class="comment">% Process: Add tag to name.</span>
+            curr_file = bst_process(<span class="string">'CallProcess'</span>, <span class="string">'process_add_tag'</span>, curr_file, [], <span class="keyword">...</span>
+                <span class="string">'tag'</span>,  [SubjectNames{iSubj}, <span class="string">'_'</span>, my_sFiles_string, <span class="string">'_'</span>, Conditions{iCond}, <span class="string">'resample'</span>] , <span class="keyword">...</span>
+                <span class="string">'output'</span>, 2);  <span class="comment">% Add to name</span>
+
+            <span class="comment">% create a cell with n Condition elements. Each one contain the</span>
+            <span class="comment">% struct related to a condition</span>
+            extract_all_files{iCond}(iSubj)=curr_file;
+</pre><pre class="codeinput">        <span class="keyword">end</span>;
+    <span class="keyword">end</span>;
+
+            bst_report(<span class="string">'Start'</span>, extract_all_files{1});
+
+            <span class="comment">% notice that the order of subjects of group 1 and 2 is correct (i.e., paired) cause</span>
+            <span class="comment">% it reflects the order of Grouped_condition, that were sorted</span>
+            <span class="comment">% by fragment before</span>
+
+            <span class="comment">% Process: Perm t-test paired [0ms, 400ms]          H0:(A=B), H1:(A&lt;&gt;B)</span>
+            Res = bst_process(<span class="string">'CallProcess'</span>, <span class="string">'process_test_permutation2p'</span>, extract_all_files{1},  extract_all_files{2}, <span class="keyword">...</span>
+                <span class="string">'timewindow'</span>,     [0, 0.4], <span class="keyword">...</span>
+                <span class="string">'scoutsel'</span>,       {<span class="string">'Destrieux'</span>, {<span class="string">'G_temporal_middle R'</span>, <span class="string">'G_temporal_middle L'</span>, <span class="string">'G_front_middle L'</span>, <span class="string">'G_front_middle R'</span>, <span class="string">'G_pariet_inf-Angular L'</span>, <span class="string">'G_pariet_inf-Angular R'</span>, <span class="string">'G_pariet_inf-Supramar L'</span>, <span class="string">'G_pariet_inf-Supramar R'</span>, <span class="string">'G_parietal_sup L'</span>, <span class="string">'G_parietal_sup R'</span>, <span class="string">'S_intrapariet_and_P_trans L'</span>, <span class="string">'S_intrapariet_and_P_trans R'</span>}}, <span class="keyword">...</span>
+                <span class="string">'scoutfunc'</span>,      1, <span class="keyword">...</span><span class="comment">  % Mean</span>
+                <span class="string">'isnorm'</span>,         0, <span class="keyword">...</span>
+                <span class="string">'avgtime'</span>,        0, <span class="keyword">...</span>
+                <span class="string">'iszerobad'</span>,      1, <span class="keyword">...</span>
+                <span class="string">'Comment'</span>,        <span class="string">''</span>, <span class="keyword">...</span>
+                <span class="string">'test_type'</span>,      <span class="string">'ttest_paired'</span>, <span class="keyword">...</span><span class="comment">  % Paired Student's t-test T = mean(A-B) / std(A-B) * sqrt(n)</span>
+                <span class="string">'randomizations'</span>, 1000, <span class="keyword">...</span>
+                <span class="string">'tail'</span>,           <span class="string">'two'</span>);  <span class="comment">% Two-tailed</span>
+</pre><h2>delete manually all files<a name="11"></a></h2><pre class="codeinput">            <span class="keyword">for</span> myfile=1:length(extract_all_files{1})
+                <span class="comment">% the line below retrive the whole path to the file (from</span>
+                <span class="comment">% protocol info, and from file name).</span>
+                delete(fullfile(ProtocolInfo.STUDIES, extract_all_files{1}(myfile).FileName));
+
+            <span class="keyword">end</span>;
+
+            <span class="keyword">for</span> myfile=1:length(extract_all_files{2})
+                <span class="comment">% the line below retrive the whole path to the file (from</span>
+                <span class="comment">% protocol info, and from file name).</span>
+                delete(fullfile(ProtocolInfo.STUDIES, extract_all_files{2}(myfile).FileName));
+
+            <span class="keyword">end</span>;
+
+            <span class="comment">% reload all conditions of current subjects to update GUI.</span>
+            db_reload_conditions(1);
+
+            <span class="comment">%export_matlab(Res, %% Cannot USE DELETE PROCESS TO DELETE (due to a probable bug)</span>
+            <span class="comment">% also the results of the perm-test is deleted. I should add here some lines to delete manually the files</span>
+            <span class="comment">% and then reload files in brainstorm</span>
+
+            <span class="comment">% alternativly you can temporary store the dataset and then</span>
+            <span class="comment">% re_import_it with db_add_data</span>
+
+            <span class="comment">% Process: Delete selected files (delete the imported epoch in the</span>
+                <span class="comment">% first step, to save space).</span>
+             <span class="comment">%Del = bst_process('CallProcess', 'process_delete', extract_all_files{1}, [], ...</span>
+              <span class="comment">%      'target', 1);  % Delete selected files (group 1)</span>
+             <span class="comment">%Del = bst_process('CallProcess', 'process_delete', extract_all_files{2}, [], ...</span>
+              <span class="comment">%      'target', 1);  % Delete selected files  (group 2)</span>
+
+            <span class="comment">% Save and display report</span>
+            ReportFile = bst_report(<span class="string">'Save'</span>, Res);
+            bst_report(<span class="string">'Export'</span>, ReportFile, [export_main_folder, <span class="string">'/'</span> export_folder]);
+</pre><pre class="codeinput">    <span class="keyword">end</span>;
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% launch brainstorm, with no gui (but only if is not already running)
+if ~brainstorm('status')
+    brainstorm %nogui
+end
+
+
+%% SET EXPORT FOLDER FOR REPORTS
+export_main_folder='/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_reports/';
+export_folder='resample';
+
+
+if ~exist([export_main_folder, '/' export_folder])
+    mkdir([export_main_folder, '/' export_folder]) % create folder if it does not exist
+end;
+
+
+
+%% SET PROTOCOL
+ProtocolName = 'Meghem_analisi_3';
+
+% get the protocol index, knowing the name
+iProtocol = bst_get('Protocol', ProtocolName);
+
+% set the current protocol
+gui_brainstorm('SetCurrentProtocol', iProtocol);
+
+% check info
+ProtocolInfo=bst_get('ProtocolInfo')
+
+% get the subject list
+my_subjects = bst_get('ProtocolSubjects')
+
+
+SubjectNames={my_subjects.Subject(2:end).Name}; % NOTE! the 2-end, to exclude the intra trials
+
+
+%% SELECT  TRIALS
+% 
+my_sFiles_string='Second_Corr'
+
+% make the first selection with bst process
+my_sFiles_ini = bst_process('CallProcess', 'process_select_files_timefreq', [], [], ...
+    'subjectname', 'Group_analysis', ...
+    'includeintra',  1,...
+    'tag',         my_sFiles_string);
+
+
+%% DIVIDE BY CONDITION
+Conditions={'Fast18', 'Slow18'};
+
+Condition_grouped=group_by_str_bst( {my_sFiles_ini.FileName}, Conditions);
+Condition_grouped{1}=sort_by_fragment(Condition_grouped{1}, 'MH0..');
+Condition_grouped{2}=sort_by_fragment(Condition_grouped{2}, 'MH0..');
+
+
+%%
+% set frequencies
+Freqs={[5 7]; [8 12]};
+Freq_names={'theta' 'alpha'};
+
+% NOTE: to make permutation on ROI i first extract values, isolating one
+% frequency.
+% in this way, results for one frequency are treated as a source object and
+% I can use the permutation function for sources (that allows to specify
+% scouts).
+
+for iFreq=1:length(Freqs);
+    for iCond=1:length(Conditions);
+        for iSubj=1:length(SubjectNames);
+             
+            %% IN this loop I extract values separately for each subject
+            % this is necessary cause extract values try always to
+            % concatenate time or subjects. Only using just on subject at
+            % the time I obtain what I want. a
+            % Process: Extract values: [-300ms,600ms] 5-7Hz
+            curr_file = bst_process('CallProcess', 'process_extract_values', Condition_grouped{iCond}{iSubj}, [], ...
+                'timewindow', [-0.3, 0.6], ...
+                'freqrange',  [Freqs{iFreq}(1), Freqs{iFreq}(2)], ...
+                'rows',       '', ...
+                'isabs',      0, ...
+                'avgtime',    0, ...
+                'avgrow',     0, ...
+                'avgfreq',    0, ...
+                'matchrows',  0, ...
+                'dim',        2, ...  % Concatenate time (dimension 2)
+                'Comment',    '');
+            
+            % Process: Resample: 300Hz
+            curr_file = bst_process('CallProcess', 'process_resample', curr_file, [], ...
+                'freq',      300, ...
+                'overwrite', 1);
+            
+            % Process: Add tag to name.
+            curr_file = bst_process('CallProcess', 'process_add_tag', curr_file, [], ...
+                'tag',  [SubjectNames{iSubj}, '_', my_sFiles_string, '_', Conditions{iCond}, 'resample'] , ...
+                'output', 2);  % Add to name
+            
+            % create a cell with n Condition elements. Each one contain the
+            % struct related to a condition
+            extract_all_files{iCond}(iSubj)=curr_file;
+        end;
+    end;
+            
+            bst_report('Start', extract_all_files{1});
+            
+            % notice that the order of subjects of group 1 and 2 is correct (i.e., paired) cause
+            % it reflects the order of Grouped_condition, that were sorted
+            % by fragment before
+            
+            % Process: Perm t-test paired [0ms, 400ms]          H0:(A=B), H1:(A<>B)
+            Res = bst_process('CallProcess', 'process_test_permutation2p', extract_all_files{1},  extract_all_files{2}, ...
+                'timewindow',     [0, 0.4], ...
+                'scoutsel',       {'Destrieux', {'G_temporal_middle R', 'G_temporal_middle L', 'G_front_middle L', 'G_front_middle R', 'G_pariet_inf-Angular L', 'G_pariet_inf-Angular R', 'G_pariet_inf-Supramar L', 'G_pariet_inf-Supramar R', 'G_parietal_sup L', 'G_parietal_sup R', 'S_intrapariet_and_P_trans L', 'S_intrapariet_and_P_trans R'}}, ...
+                'scoutfunc',      1, ...  % Mean
+                'isnorm',         0, ...
+                'avgtime',        0, ...
+                'iszerobad',      1, ...
+                'Comment',        '', ...
+                'test_type',      'ttest_paired', ...  % Paired Student's t-test T = mean(A-B) / std(A-B) * sqrt(n)
+                'randomizations', 1000, ...
+                'tail',           'two');  % Two-tailed
+            
+            
+            %% delete manually all files
+            
+            
+            for myfile=1:length(extract_all_files{1})
+                % the line below retrive the whole path to the file (from
+                % protocol info, and from file name).
+                delete(fullfile(ProtocolInfo.STUDIES, extract_all_files{1}(myfile).FileName));
+                
+            end;
+           
+            for myfile=1:length(extract_all_files{2})
+                % the line below retrive the whole path to the file (from
+                % protocol info, and from file name).
+                delete(fullfile(ProtocolInfo.STUDIES, extract_all_files{2}(myfile).FileName));
+                
+            end;
+            
+            % reload all conditions of current subjects to update GUI.
+            db_reload_conditions(1);
+            
+            %export_matlab(Res, %% Cannot USE DELETE PROCESS TO DELETE (due to a probable bug)
+            % also the results of the perm-test is deleted. I should add here some lines to delete manually the files 
+            % and then reload files in brainstorm
+            
+            % alternativly you can temporary store the dataset and then
+            % re_import_it with db_add_data 
+            
+            % Process: Delete selected files (delete the imported epoch in the
+                % first step, to save space).
+             %Del = bst_process('CallProcess', 'process_delete', extract_all_files{1}, [], ...
+              %      'target', 1);  % Delete selected files (group 1)
+             %Del = bst_process('CallProcess', 'process_delete', extract_all_files{2}, [], ...
+              %      'target', 1);  % Delete selected files  (group 2)
+            
+            % Save and display report
+            ReportFile = bst_report('Save', Res);
+            bst_report('Export', ReportFile, [export_main_folder, '/' export_folder]);
+    end;
+    
+   
+
+
+##### SOURCE END #####
+--></body></html>

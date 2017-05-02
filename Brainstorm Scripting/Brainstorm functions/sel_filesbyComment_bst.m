@@ -13,7 +13,7 @@
 %
 % Version: 24/02/2017
 
-function [selFiles, selFiles_indices] = sel_filesbyComment_bst(sFiles.Comment, include_string, exclude_string)
+function [selFiles, selFiles_indices] = sel_filesbyComment_bst(sFiles, include_string, exclude_string)
 
 incl_sFiles=regexpi({sFiles.Comment}, include_string); %
 

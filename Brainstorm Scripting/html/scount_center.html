@@ -1,0 +1,211 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>scount_center</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-04-01"><meta name="DC.source" content="scount_center.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% esporta la corteccia su matlab come mycortex (la corteccia da "anat").</span>
+
+<span class="comment">% un Atlas ? composto da vari campi.</span>
+<span class="comment">% parto dall'atlas di cui voglio calcolare il centro.</span>
+<span class="comment">% Lo duplico e al nome aggiungo - center.</span>
+<span class="comment">% Quindi sostituisco ai campi "Vertices" il centro solo</span>
+
+<span class="comment">% devo ciclare per tutte le scout dell'Atlas</span>
+<span class="comment">%</span>
+
+<span class="comment">% IMPORTANTE: se vuoi usarlo per la TF devi avere creato l'head model</span>
+<span class="comment">% con l'atlas esistente. Altrimenti dal menu a tendina non ti comparir? il</span>
+<span class="comment">% nuovo atlas.</span>
+
+
+original_atlas=2
+
+n_atlases=length(mycortex.Atlas);
+<span class="comment">% duplicate the Atlas add as last atlas</span>
+mycortex.Atlas(n_atlases+1)=mycortex.Atlas(original_atlas);
+mycortex.Atlas(n_atlases+1).Name=[mycortex.Atlas(n_atlases+1).Name <span class="string">' - centroid'</span>];
+
+
+
+<span class="keyword">for</span> s=1:length(mycortex.Atlas(original_atlas).Scouts);
+
+    myscout_info=mycortex.Atlas(original_atlas).Scouts(s);
+    myscout=myscout_info.Vertices;
+    mysurface=mycortex.Vertices;
+
+    plot3(mysurface(:,1), mysurface(:,2), mysurface(:,3), <span class="string">'.'</span>);
+    hold <span class="string">on</span>
+    plot3(mysurface(myscout,1), mysurface(myscout,2), mysurface(myscout,3), <span class="string">'o'</span>)
+
+    <span class="comment">% DA QUI DEVI TROVARE UN MODO PER OPERAZIONALIZZARE IL PUNTO "CENTRALE DI</span>
+    <span class="comment">% UNA SUPERFICIE".</span>
+
+    <span class="comment">% https://en.wikipedia.org/wiki/Centroid</span>
+    scout_3d=[mysurface(myscout,1), mysurface(myscout,2), mysurface(myscout,3)]; <span class="comment">% define scout in 3d</span>
+    centroid=mean(scout_3d, 1);  <span class="comment">% calculate centroid</span>
+
+    <span class="comment">% calculate distance from centroid of each point in scouts.</span>
+    Eucl_dist_from_centroid=size(myscout,1);
+    <span class="keyword">for</span> (i=1:size(scout_3d,1));
+        Eucl_dist_from_centroid(i)= sqrt((scout_3d(i,1)- centroid(:,1))^2 + (scout_3d(i,2)-centroid(:,2))^2 + (scout_3d(i,3)-centroid(:,3))^2);
+    <span class="keyword">end</span>;
+
+    [val  ind]=min(Eucl_dist_from_centroid);
+
+    scout_center=myscout(ind);
+
+    plot3(mysurface(scout_center,1), mysurface(scout_center,2), mysurface(scout_center ,3), <span class="string">'*'</span>, <span class="string">'markersize'</span>, 60)
+    hold <span class="string">off</span>
+
+    mycortex.Atlas(n_atlases+1).Scouts(s).Vertices = scout_center ;
+
+<span class="keyword">end</span>;
+
+new_atlas = mycortex.Atlas(n_atlases+1);
+
+<span class="comment">% FINITO QUESTO CLICCA SUL SOGGETTO (scheda anat) e re-importa la</span>
+<span class="comment">% corteccia. % quindi mettila come default. In alternaativa potresti</span>
+<span class="comment">% esportare solo la scout, ma pare dovresti farlo una scout alla volta.</span>
+<span class="comment">% ho fatto qualche prova sulle GUI.</span>
+</pre><pre class="codeoutput">
+original_atlas =
+
+     2
+
+</pre><pre class="codeoutput error">Undefined variable "mycortex" or function "mycortex.Atlas".
+
+Error in scount_center (line 18)
+n_atlases=length(mycortex.Atlas);
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% esporta la corteccia su matlab come mycortex (la corteccia da "anat").
+
+% un Atlas ? composto da vari campi.
+% parto dall'atlas di cui voglio calcolare il centro.
+% Lo duplico e al nome aggiungo - center.
+% Quindi sostituisco ai campi "Vertices" il centro solo
+
+% devo ciclare per tutte le scout dell'Atlas
+%
+
+% IMPORTANTE: se vuoi usarlo per la TF devi avere creato l'head model
+% con l'atlas esistente. Altrimenti dal menu a tendina non ti comparir? il
+% nuovo atlas.
+
+
+original_atlas=2
+
+n_atlases=length(mycortex.Atlas);
+% duplicate the Atlas add as last atlas
+mycortex.Atlas(n_atlases+1)=mycortex.Atlas(original_atlas);
+mycortex.Atlas(n_atlases+1).Name=[mycortex.Atlas(n_atlases+1).Name ' - centroid'];
+
+
+
+for s=1:length(mycortex.Atlas(original_atlas).Scouts);
+
+    myscout_info=mycortex.Atlas(original_atlas).Scouts(s);
+    myscout=myscout_info.Vertices;
+    mysurface=mycortex.Vertices;
+
+    plot3(mysurface(:,1), mysurface(:,2), mysurface(:,3), '.');
+    hold on
+    plot3(mysurface(myscout,1), mysurface(myscout,2), mysurface(myscout,3), 'o')
+
+    % DA QUI DEVI TROVARE UN MODO PER OPERAZIONALIZZARE IL PUNTO "CENTRALE DI
+    % UNA SUPERFICIE".
+
+    % https://en.wikipedia.org/wiki/Centroid
+    scout_3d=[mysurface(myscout,1), mysurface(myscout,2), mysurface(myscout,3)]; % define scout in 3d
+    centroid=mean(scout_3d, 1);  % calculate centroid
+
+    % calculate distance from centroid of each point in scouts.
+    Eucl_dist_from_centroid=size(myscout,1);
+    for (i=1:size(scout_3d,1));
+        Eucl_dist_from_centroid(i)= sqrt((scout_3d(i,1)- centroid(:,1))^2 + (scout_3d(i,2)-centroid(:,2))^2 + (scout_3d(i,3)-centroid(:,3))^2);
+    end;
+
+    [val  ind]=min(Eucl_dist_from_centroid);
+
+    scout_center=myscout(ind);
+
+    plot3(mysurface(scout_center,1), mysurface(scout_center,2), mysurface(scout_center ,3), '*', 'markersize', 60)
+    hold off
+    
+    mycortex.Atlas(n_atlases+1).Scouts(s).Vertices = scout_center ;
+
+end;
+
+new_atlas = mycortex.Atlas(n_atlases+1);
+
+% FINITO QUESTO CLICCA SUL SOGGETTO (scheda anat) e re-importa la
+% corteccia. % quindi mettila come default. In alternaativa potresti
+% esportare solo la scout, ma pare dovresti farlo una scout alla volta.
+% ho fatto qualche prova sulle GUI.
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,273 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>script_MEGHEM_ERF_extractscout_export2erpR_DRA</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-04-01"><meta name="DC.source" content="script_MEGHEM_ERF_extractscout_export2erpR_DRA.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">SET EXPORT FOLDER FOR REPORTS</a></li><li><a href="#3">SET PROTOCOL</a></li><li><a href="#4">ADD SPECIFIC TAG TO ALL FILES CREATED</a></li><li><a href="#5">SELECT  TRIALS</a></li><li><a href="#6">!!!! DA DATERMINARE COME FARE SELEZIONE</a></li><li><a href="#7">SEPARATE FILES FOR SUBJECT</a></li><li><a href="#8">SEPARATE FILES BY CONDITION</a></li><li><a href="#9">EXTRACT SCOUTS AND EXPORT TO erpR FORMAT</a></li></ul></div><pre class="codeinput"><span class="comment">% launch brainstorm, with no gui (but only if is not already running)</span>
+clear
+
+<span class="keyword">if</span> ~brainstorm(<span class="string">'status'</span>)
+    brainstorm <span class="comment">%nogui</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error: File: /Users/giorgioarcara/Documents/MATLAB_code_Giorgio/Brainstorm Scripting/script_MEGHEM_ERF_extractscout_export2erpR_DRA.m Line: 91 Column: 83
+Unbalanced or unexpected parenthesis or bracket.
+</pre><h2>SET EXPORT FOLDER FOR REPORTS<a name="2"></a></h2><pre class="codeinput">export_main_folder=<span class="string">'/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_reports/'</span>;
+export_folder1=<span class="string">'export_erpR_ERF'</span>
+
+<span class="keyword">if</span> ~exist([export_main_folder, <span class="string">'/'</span> export_folder1])
+    mkdir([export_main_folder, <span class="string">'/'</span> export_folder1]) <span class="comment">% create folder if it does not exist</span>
+<span class="keyword">end</span>;
+</pre><h2>SET PROTOCOL<a name="3"></a></h2><pre class="codeinput">ProtocolName = <span class="string">'Meghem_analisi_3'</span>;
+
+<span class="comment">% get the protocol index, knowing the name</span>
+iProtocol = bst_get(<span class="string">'Protocol'</span>, ProtocolName);
+
+<span class="comment">% set the current protocol</span>
+gui_brainstorm(<span class="string">'SetCurrentProtocol'</span>, iProtocol);
+
+<span class="comment">% check info</span>
+ProtocolInfo=bst_get(<span class="string">'ProtocolInfo'</span>)
+
+<span class="comment">% get the subject list</span>
+my_subjects = bst_get(<span class="string">'ProtocolSubjects'</span>)
+</pre><h2>ADD SPECIFIC TAG TO ALL FILES CREATED<a name="4"></a></h2><pre class="codeinput">my_tag=[];
+</pre><h2>SELECT  TRIALS<a name="5"></a></h2><pre class="codeinput">my_sFiles_string=<span class="string">'Second_corr'</span>
+
+<span class="comment">% Process: Select results (i.e., select source data)</span>
+my_sFiles_ini= bst_process(<span class="string">'CallProcess'</span>, <span class="string">'process_select_files_results'</span>, [], [], <span class="keyword">...</span>
+    <span class="string">'subjectname'</span>,   <span class="string">'All'</span>, <span class="keyword">...</span>
+    <span class="string">'condition'</span>,     [], <span class="keyword">...</span>
+    <span class="string">'tag'</span>,           my_sFiles_string, <span class="keyword">...</span>
+    <span class="string">'includebad'</span>,    0, <span class="keyword">...</span>
+    <span class="string">'includeintra'</span>,  1, <span class="keyword">...</span><span class="comment"> % include intra as I select average of runs</span>
+    <span class="string">'includecommon'</span>, 0);
+</pre><h2>!!!! DA DATERMINARE COME FARE SELEZIONE<a name="6"></a></h2><pre class="codeinput">my_sel_sFiles=sel_filesbyComment_bst(my_sFiles_ini, <span class="string">'Fast18|Slow18'</span>);
+
+<span class="comment">% TO BE DEFINED BETTER!!</span>
+</pre><h2>SEPARATE FILES FOR SUBJECT<a name="7"></a></h2><pre class="codeinput">SubjectNames={my_subjects.Subject(2:end).Name}; <span class="comment">% NOTE! the 2-end, to exclude the intra trials</span>
+Subj_grouped=group_by_str_bst(my_sel_sFiles, SubjectNames);
+</pre><h2>SEPARATE FILES BY CONDITION<a name="8"></a></h2><pre class="codeinput">Conditions={<span class="string">'First18'</span>, <span class="string">'Slow18'</span>}
+Subj_Condition={}
+
+<span class="keyword">for</span> iSubj=1:length(Subj_grouped)
+    Subj_Condition{iSubj}=group_by_str_bst(Subj_grouped{iSubj}, Conditions); <span class="comment">% IMPORTANT: notice I enter in the cell {}</span>
+<span class="keyword">end</span>;
+
+
+my_scouts={<span class="string">'Destrieux'</span>, {<span class="string">'G_pariet_inf-Angular L'</span>, <span class="string">'G_pariet_inf-Angular R'</span>, <span class="string">'G_pariet_inf-Supramar L'</span>, <span class="string">'G_pariet_inf-Supramar R'</span>, <span class="string">'G_parietal_sup L'</span>, <span class="string">'G_parietal_sup R'</span>, <span class="string">'S_intrapariet_and_P_trans L'</span>, <span class="string">'S_intrapariet_and_P_trans R'</span>}}
+<span class="comment">%my_scouts={'Destrieux', {'G_pariet_inf-Angular L', 'G_pariet_inf-Angular R'}};</span>
+</pre><h2>EXTRACT SCOUTS AND EXPORT TO erpR FORMAT<a name="9"></a></h2><p>notice I have to loop over subjects, otherwise in extracting values values from different subjects are concatenated together.</p><pre class="codeinput"><span class="comment">% loop over subjects</span>
+<span class="keyword">for</span> iSubj=1:length(SubjectNames)
+
+    <span class="comment">%loop over Conditions</span>
+    <span class="keyword">for</span> iCond=1:length(Conditions);
+        <span class="comment">% Start a new report</span>
+        bst_report(<span class="string">'Start'</span>, Condition_grouped{iCond});
+
+        <span class="comment">% Process: Extract values: [-300ms,600ms] 5 scouts</span>
+        Temp = bst_process(<span class="string">'CallProcess'</span>, <span class="string">'process_extract_values'</span>, Subj_Condition[], <span class="keyword">...</span>
+            <span class="string">'timewindow'</span>, [-0.3, 0.6], <span class="keyword">...</span>
+            <span class="string">'scoutsel'</span>,   my_scouts, <span class="keyword">...</span>
+            <span class="string">'scoutfunc'</span>,  1, <span class="keyword">...</span><span class="comment">  % Mean</span>
+            <span class="string">'isnorm'</span>,     0, <span class="keyword">...</span>
+            <span class="string">'avgtime'</span>,    0, <span class="keyword">...</span>
+            <span class="string">'dim'</span>,        2, <span class="keyword">...</span><span class="comment">  % Concatenate time (dimension 2)</span>
+            <span class="string">'Comment'</span>,    <span class="string">''</span>);
+
+
+        <span class="comment">% Process: export to erpR</span>
+        Res = bst_process(<span class="string">'CallProcess'</span>, <span class="string">'process_export_erpR'</span>, Condition_grouped{iCond}, [], <span class="keyword">...</span>
+            <span class="string">'base'</span>,       Conditions{iCond}, <span class="keyword">...</span>
+            <span class="string">'chars'</span>,      70, <span class="keyword">...</span>
+            <span class="string">'BadChans'</span>,   1 );
+
+        <span class="comment">% Save and export report for deleting and extracting</span>
+        ReportFile = bst_report(<span class="string">'Save'</span>, Res);
+        bst_report(<span class="string">'Export'</span>, ReportFile, [export_main_folder, <span class="string">'/'</span> export_folder1]);
+    <span class="keyword">end</span>;
+
+<span class="keyword">end</span>;
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% launch brainstorm, with no gui (but only if is not already running)
+clear
+
+if ~brainstorm('status')
+    brainstorm %nogui
+end
+
+
+%% SET EXPORT FOLDER FOR REPORTS
+export_main_folder='/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_reports/';
+export_folder1='export_erpR_ERF'
+
+if ~exist([export_main_folder, '/' export_folder1])
+    mkdir([export_main_folder, '/' export_folder1]) % create folder if it does not exist
+end;
+
+
+%% SET PROTOCOL
+ProtocolName = 'Meghem_analisi_3';
+
+% get the protocol index, knowing the name
+iProtocol = bst_get('Protocol', ProtocolName);
+
+% set the current protocol
+gui_brainstorm('SetCurrentProtocol', iProtocol);
+
+% check info
+ProtocolInfo=bst_get('ProtocolInfo')
+
+% get the subject list
+my_subjects = bst_get('ProtocolSubjects')
+
+
+%% ADD SPECIFIC TAG TO ALL FILES CREATED
+my_tag=[];
+
+%% SELECT  TRIALS
+%
+my_sFiles_string='Second_corr'
+
+% Process: Select results (i.e., select source data)
+my_sFiles_ini= bst_process('CallProcess', 'process_select_files_results', [], [], ...
+    'subjectname',   'All', ...
+    'condition',     [], ...
+    'tag',           my_sFiles_string, ...
+    'includebad',    0, ...
+    'includeintra',  1, ... % include intra as I select average of runs
+    'includecommon', 0);
+
+
+
+%% !!!! DA DATERMINARE COME FARE SELEZIONE
+
+my_sel_sFiles=sel_filesbyComment_bst(my_sFiles_ini, 'Fast18|Slow18');
+
+% TO BE DEFINED BETTER!!
+
+
+%% SEPARATE FILES FOR SUBJECT 
+SubjectNames={my_subjects.Subject(2:end).Name}; % NOTE! the 2-end, to exclude the intra trials
+Subj_grouped=group_by_str_bst(my_sel_sFiles, SubjectNames);
+
+
+%% SEPARATE FILES BY CONDITION
+Conditions={'First18', 'Slow18'} 
+Subj_Condition={}
+
+for iSubj=1:length(Subj_grouped)
+    Subj_Condition{iSubj}=group_by_str_bst(Subj_grouped{iSubj}, Conditions); % IMPORTANT: notice I enter in the cell {}   
+end;
+
+
+my_scouts={'Destrieux', {'G_pariet_inf-Angular L', 'G_pariet_inf-Angular R', 'G_pariet_inf-Supramar L', 'G_pariet_inf-Supramar R', 'G_parietal_sup L', 'G_parietal_sup R', 'S_intrapariet_and_P_trans L', 'S_intrapariet_and_P_trans R'}}
+%my_scouts={'Destrieux', {'G_pariet_inf-Angular L', 'G_pariet_inf-Angular R'}};
+
+
+%% EXTRACT SCOUTS AND EXPORT TO erpR FORMAT
+% notice I have to loop over subjects, otherwise in extracting values
+% values from different subjects are concatenated together.
+
+
+% loop over subjects
+for iSubj=1:length(SubjectNames)
+    
+    %loop over Conditions
+    for iCond=1:length(Conditions);
+        % Start a new report
+        bst_report('Start', Condition_grouped{iCond});
+        
+        % Process: Extract values: [-300ms,600ms] 5 scouts
+        Temp = bst_process('CallProcess', 'process_extract_values', Subj_Condition[], ...
+            'timewindow', [-0.3, 0.6], ...
+            'scoutsel',   my_scouts, ...
+            'scoutfunc',  1, ...  % Mean
+            'isnorm',     0, ...
+            'avgtime',    0, ...
+            'dim',        2, ...  % Concatenate time (dimension 2)
+            'Comment',    '');
+        
+        
+        % Process: export to erpR
+        Res = bst_process('CallProcess', 'process_export_erpR', Condition_grouped{iCond}, [], ...
+            'base',       Conditions{iCond}, ...
+            'chars',      70, ...
+            'BadChans',   1 );
+        
+        % Save and export report for deleting and extracting
+        ReportFile = bst_report('Save', Res);
+        bst_report('Export', ReportFile, [export_main_folder, '/' export_folder1]);
+    end;
+    
+end;
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
