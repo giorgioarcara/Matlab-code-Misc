@@ -1,4 +1,4 @@
-function [OutputFiles, Messages, isError] = bst_timefreq_g(Data, OPTIONS)
+function [OutputFiles, Messages, isError] = bst_timefreq(Data, OPTIONS)
 % BST_TIMEFREQ: Compute time-frequency decompositions of the signals.
 %
 % USAGE:  [OutputFiles, Messages, isError] = bst_timefreq(Data, OPTIONS)
@@ -130,7 +130,7 @@ if isAverage && OPTIONS.SaveKernel
 end
         
 % Progress bar
-swsessionh(OPTIONS.Method)
+switch(OPTIONS.Method)
     case 'morlet',   strMap = 'time-frequency maps';
     case 'fft',      strMap = 'FFT values';
     case 'psd',      strMap = 'PSD values';
@@ -208,7 +208,7 @@ for iData = 1:length(Data)
     BadSegments   = [];
     if isFile
         % Select subset of data
-        swsessionh (DataType)
+        switch (DataType)
             case 'data'
                 % Get channel file
                 ChannelFile = bst_get('ChannelFileForStudy', sStudy.FileName);
@@ -451,7 +451,7 @@ for iData = 1:length(Data)
     
     % ===== COMPUTE TRANSFORM =====
     isMeasureApplied = 0;
-    swsessionh (OPTIONS.Method)
+    switch (OPTIONS.Method)
         % Morlet wavelet transform (Dimitrios Pantazis)
         case 'morlet'
             % Remove mean of the signal
@@ -582,7 +582,7 @@ for iData = 1:length(Data)
     
     % ===== APPLY MEASURE =====
     if ~isMeasureApplied
-        swsessionh lower(OPTIONS.Measure)
+        switch lower(OPTIONS.Measure)
             case 'none'       % Nothing to do
             case 'power',     TF = abs(TF) .^ 2;
             case 'magnitude', TF = abs(TF);
