@@ -83,7 +83,11 @@ end;
 
 
 for iSubj=1:length(SubjectNames)
+    
     for iSplitHalf=1:length(SH)
+        
+    % iSubj=1
+    % iSplitHalf = 1
         
     %% CALCULATE MEAN IN WINDOW OF INTEREST %TO BE MOVED IN SCRIPT_THRESH PART 1
 
@@ -121,7 +125,8 @@ for iSubj=1:length(SubjectNames)
     % - FPR values for RETEST varying t2 threshold (m) x varying t1 threshold (n).
     
     %% generate ALL possibile threshosld (THIS IS VERY LONG!!)
-    % NO!! I wrote to Tim Bardouille in 23/6/2017 and he told 
+    % NO!! I wrote to the corresponding author in 23/6/2017 and he told 
+    % that he used a subsample
     % but is it really necessary? Do you really need 8000 possibile
     % threshold? To think about it!
     
@@ -135,7 +140,7 @@ for iSubj=1:length(SubjectNames)
     %curr_retest_sorted=sort(curr_retest) ;
     %retest_steps=curr_retest_sorted(1: round(length(curr_retest_sorted)/100) : end);
     
-    % generate 100 equispaced threshold (suboptimal)
+    % generate 100 equispaced threshold 
     test_steps=linspace(min(curr_test), max(curr_test), 100);
     retest_steps=linspace(min(curr_retest),  max(curr_retest), 100);
     
@@ -194,7 +199,7 @@ for iSubj=1:length(SubjectNames)
         end;
             
     end;
-    
+        
     %% AUC CALCULATION
     % calculate AUC for test (varying t1 threshold) and retest (varying t2
     % threhold)
@@ -210,7 +215,8 @@ for iSubj=1:length(SubjectNames)
     
    
         
-        
+    end;       
+end;
 
 
     

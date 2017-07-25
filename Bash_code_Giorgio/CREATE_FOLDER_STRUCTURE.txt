@@ -1,0 +1,20 @@
+# this script starts from a list of IDs and a folder
+# it creates a structure of subfolder in the folder specified
+# for data organization of MEGlab San Camillo
+# Author: Giorgio Arcara
+
+###############
+# INPUT #######
+###############
+
+ID_LIST=('MH001' 'MH002' 'MH003')
+EXPORT_FOLDER="/Users/giorgioarcara/Desktop/prova"
+
+# CREATE FOLDER STRUCTURE
+for id in ${ID_LIST[@]}; do
+mkdir "$EXPORT_FOLDER/$id"
+mkdir "$EXPORT_FOLDER/$id/MEG_ORIG"
+mkdir "$EXPORT_FOLDER/$id/fidpics"
+mkdir "$EXPORT_FOLDER/$id/MRI_ORIG"
+mkdir "$EXPORT_FOLDER/$id/MRI_FS"
+done

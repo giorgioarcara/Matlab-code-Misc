@@ -1,0 +1,36 @@
+# This is an utility script for MEGlab San Camillo.
+# It receives as input a list of ids and an export folder. It copies from a search folder (and subfolders)
+# all folders containing in the name the id to the export folder.
+# 
+# Author: Giorgio Arcara
+
+###############
+# INPUT #######
+###############
+
+ID_LIST=('MH001' 'MH002' 'MH003')
+EXPORT_FOLDER="/Users/giorgioarcara/Desktop/prova"
+
+
+
+#################################################
+
+# this will be the search folder (acquire data)
+SEARCH_FOLDER="/Users/giorgioarcara/Documents/Lavori San Camillo/MEGHEM analisi marzo 2016/MEGHEM_analysis_easy_vs_hard/*"
+IFS=$'\n'
+
+# loop over elements in ID_LIST
+for id in ${ID_LIST[@]}; 
+do 	
+# create a string with "*" to search files containing the ID
+search_id="$id*"
+# loop over file names in the SEARCH_FOLDER
+for f in $(find $SEARCH_FOLDER -maxdepth 0 -name $search_id);
+# create folder
+ 
+do cp -rf $f "$EXPORT_FOLDER/$id/MEG_ORIG"
+done
+done
+
+# loop searching for matching files in SEARCH FOLDER
+# for f in $(find $SEARCH_FOLDER -name 'MH001*'); do echo $f; done
