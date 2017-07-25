@@ -588,7 +588,7 @@ for iData = 1:length(Data)
             case 'magnitude', TF = abs(TF);
             
             % GIORGIO
-            case 'ITC', 
+            case 'itc', 
                 for ifreq=1:size(TF,3);
                 
                 TF(:,:,ifreq) = exp(1i*angle(TF(:,:,ifreq))); % from code cohen chapter 19  
