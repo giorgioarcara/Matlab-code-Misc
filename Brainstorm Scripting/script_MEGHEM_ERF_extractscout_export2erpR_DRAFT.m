@@ -1,4 +1,4 @@
-% launch brainstorm, with no gui (but only if is not already running)
+ % launch brainstorm, with no gui (but only if is not already running)
 clear
 
 if ~brainstorm('status')
