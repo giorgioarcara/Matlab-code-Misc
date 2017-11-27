@@ -1,4 +1,4 @@
-function varargout = process_export_erpR( varargin )
+function varargout = process_export_BAD( varargin )
 % PROCESS_ADD_TAG: Add a comment tag.
 %
 % USAGE:     sProcess = process_export_erpR('GetDescription')

@@ -41,7 +41,7 @@ my_subjects = bst_get('ProtocolSubjects')
 
 %% SELECT  TRIALS
 %
-my_sFiles_string='_second'
+my_sFiles_string='p_'
 
 % make the first selection with bst process
 my_sFiles_ini = bst_process('CallProcess', 'process_select_files_data', [], [], ...
@@ -51,18 +51,19 @@ my_sFiles_ini = bst_process('CallProcess', 'process_select_files_data', [], [], 
 
 
 my_sFiles = sel_files_bst({my_sFiles_ini.FileName}, 'average');
-
+my_sFiles = sel_files_bst(my_sFiles, 'low');
+my_sFiles = sel_files_bst(my_sFiles, 'sj0007');
 
 
 %% DIVIDE BY CONDITION
-Conditions={'m_qualche_sg', 'm_qualche_pl', 'm_alcuni_sg', 'm_alcuni_pl', 'm_un_sg', 'm_un_pl', 's_un_con', 's_un_inc', 's_qualche_con', 's_qualche_inc', 's_alcuni_con', 's_alcuni_inc'};
+Conditions={'p_m_qualche_sg', 'p_m_qualche_pl', 'p_m_alcuni_sg', 'p_m_alcuni_pl', 'p_m_un_sg', 'p_m_un_pl', 'p_s_un_con', 'p_s_un_inc', 'p_s_qualche_con', 'p_s_qualche_inc', 'p_s_alcuni_con', 'p_s_alcuni_inc'};
 
 Condition_grouped=group_by_str_bst(my_sFiles, Conditions);
 
 
 %% SET ERPR FOLDER
 
-erpR_data_folder = '/Users/giorgioarcara/Documents/Lavori Unipd/Progetto Mass Count/ERP qualche/Exp numerosity 2 ERP analysis/ExpNumerosity R analysis/Original Data'
+erpR_data_folder = '/Users/giorgioarcara/Documents/Lavori Unipd/Progetto Mass Count/ERP Agreement/Exp numerosity 2 ERP analysis/ExpNumerosity R analysis/Original Data'
 
 cd(erpR_data_folder)
 

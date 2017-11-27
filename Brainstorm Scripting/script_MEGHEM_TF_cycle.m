@@ -48,7 +48,6 @@ my_sel_sFiles=sel_files_bst({ my_sFiles_ini(:).FileName }, '.', 'average');
 
 
 
-
 %% SEPARATE FILES FOR SUBJECT 
 SubjectNames={my_subjects.Subject(2:end).Name}; % NOTE! the 2-end, to exclude the intra trials
 Subj_grouped=group_by_str_bst(my_sel_sFiles, SubjectNames);

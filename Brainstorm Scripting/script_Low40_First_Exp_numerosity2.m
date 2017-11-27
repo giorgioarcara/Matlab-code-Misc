@@ -14,6 +14,15 @@ if ~exist([export_main_folder, '/' export_folder])
 end;
 
 
+%% GET CURRENT SCRIPT NAME
+
+script_name = mfilename('fullpath')
+
+if (length(script_name) == 0)
+    error('You must run this script by calling it from the prompt or clicking the Run button!')
+end
+
+
 
 %% SET PROTOCOL
 ProtocolName = 'Exp_numerosity2_merged';
@@ -33,7 +42,7 @@ my_subjects = bst_get('ProtocolSubjects')
 
 %% SELECT  TRIALS
 %
-my_sFiles_string='_second'
+my_sFiles_string='p_'
 
 % make the first selection with bst process
 my_sFiles_ini = bst_process('CallProcess', 'process_select_files_data', [], [], ...
@@ -42,36 +51,37 @@ my_sFiles_ini = bst_process('CallProcess', 'process_select_files_data', [], [], 
     'tag',         my_sFiles_string);
 
 
-my_sFiles = sel_files_bst({my_sFiles_ini.FileName}, 'average');
-my_sFiles = sel_files_bst(my_sFiles, 'm_qualche_sg|m_alcuni_sg');
+my_sFiles = sel_files_bst({my_sFiles_ini.FileName}, 'average')
 
 
-%% DIVIDE BY CONDITION
-Conditions={'m_qualche_sg', 'm_alcuni_sg'};
-
-Condition_grouped=group_by_str_bst( my_sFiles, Conditions);
-Condition_grouped{1}=sort_by_fragment(Condition_grouped{1}, 'sj00..');
-Condition_grouped{2}=sort_by_fragment(Condition_grouped{2}, 'sj00..');
+%% AVERAGE (separating by folder)
+bst_report('Start', my_sFiles);
 
 
-%%
-% Start a new report
-bst_report('Start', Condition_grouped{1});
-
-% Process: t-test paired [all]          H0:(A=B), H1:(A<>B)
-Res = bst_process('CallProcess', 'process_test_parametric2p', Condition_grouped{1}, Condition_grouped{2}, ...
-    'timewindow',    [], ...
-    'sensortypes',   '', ...
-    'isabs',         0, ...
-    'avgtime',       0, ...
-    'avgrow',        0, ...
-    'Comment',       '', ...
-    'test_type',     'ttest_paired', ...  % Paired Student's t-test        (A-B)~N(m,v)t = mean(A-B) / std(A-B) * sqrt(n)      df=n-1
-    'tail',          'two');  % Two-tailed
-
+% Process: Low-pass:40Hz
+Res = bst_process('CallProcess', 'process_bandpass', my_sFiles, [], ...
+    'sensortypes', 'EEG', ...
+    'highpass',    0, ...
+    'lowpass',     40, ...
+    'attenuation', 'strict', ...  % 60dB
+    'mirror',      0, ...
+    'useold',      0, ...
+    'overwrite',   0);
 
 
 % Save and display report
 ReportFile = bst_report('Save', Res);
 bst_report('Open', ReportFile);
 bst_report('Export', ReportFile, [export_main_folder, '/', export_folder]);
+
+%% BACKUP SCRIPT AND OBJECT WITH DATA
+
+script_name = mfilename('fullpath')
+
+if (length(script_name) == 0)
+    error('You must run this script by calling it from the prompt or clicking the Run button!')
+end
+
+export_script(script_name, my_sFiles_ini)
+
+

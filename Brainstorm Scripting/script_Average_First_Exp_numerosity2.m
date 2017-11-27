@@ -33,7 +33,7 @@ my_subjects = bst_get('ProtocolSubjects')
 
 %% SELECT  TRIALS
 %
-my_sFiles_string='_second'
+my_sFiles_string='p_'
 
 % make the first selection with bst process
 my_sFiles_ini = bst_process('CallProcess', 'process_select_files_data', [], [], ...
@@ -42,33 +42,18 @@ my_sFiles_ini = bst_process('CallProcess', 'process_select_files_data', [], [], 
     'tag',         my_sFiles_string);
 
 
-my_sFiles = sel_files_bst({my_sFiles_ini.FileName}, 'average');
-my_sFiles = sel_files_bst(my_sFiles, 'm_qualche_sg|m_alcuni_sg');
+my_sFiles = {my_sFiles_ini.FileName}
 
 
-%% DIVIDE BY CONDITION
-Conditions={'m_qualche_sg', 'm_alcuni_sg'};
+%% AVERAGE (separating by folder)
+bst_report('Start', my_sFiles);
 
-Condition_grouped=group_by_str_bst( my_sFiles, Conditions);
-Condition_grouped{1}=sort_by_fragment(Condition_grouped{1}, 'sj00..');
-Condition_grouped{2}=sort_by_fragment(Condition_grouped{2}, 'sj00..');
-
-
-%%
-% Start a new report
-bst_report('Start', Condition_grouped{1});
-
-% Process: t-test paired [all]          H0:(A=B), H1:(A<>B)
-Res = bst_process('CallProcess', 'process_test_parametric2p', Condition_grouped{1}, Condition_grouped{2}, ...
-    'timewindow',    [], ...
-    'sensortypes',   '', ...
-    'isabs',         0, ...
-    'avgtime',       0, ...
-    'avgrow',        0, ...
-    'Comment',       '', ...
-    'test_type',     'ttest_paired', ...  % Paired Student's t-test        (A-B)~N(m,v)t = mean(A-B) / std(A-B) * sqrt(n)      df=n-1
-    'tail',          'two');  % Two-tailed
-
+% Process: Average: By trial group (folder average)
+Res = bst_process('CallProcess', 'process_average', my_sFiles, [], ...
+    'avgtype',    5, ...  % By trial group (folder average)
+    'avg_func',   1, ...  % Arithmetic average:  mean(x)
+    'weighted',   0, ...
+    'keepevents', 0);
 
 
 % Save and display report
