@@ -4,7 +4,7 @@ if ~brainstorm('status')
 end
 
 %% SET PROTOCOL
-ProtocolName = 'Meghem_analisi_3';
+ProtocolName = 'MEGHEM_analisi_3';
 
 
 % get the protocol index, knowing the name
