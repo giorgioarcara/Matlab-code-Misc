@@ -23,7 +23,7 @@ else % case in which there is both inclusion and exclusion
     
     excl_sFiles=regexp(sFilesNames, exclude_string);
     selFiles_indices=find(~cellfun(@isempty, incl_sFiles) & cellfun(@isempty, excl_sFiles)); 
-% select fineal file
+% select final file
 end
 
 selFiles=sFilesNames(selFiles_indices);
