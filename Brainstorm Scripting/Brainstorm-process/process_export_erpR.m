@@ -6,7 +6,7 @@ function varargout = process_export_erpR( varargin )
 
 % @=============================================================================
 %
-% Authors: Giorgio Arcara, 2/5/2017, version 0.5
+% Authors: Giorgio Arcara, 14/01/2018, version 0.95
 
 eval(macro_method);
 end
@@ -29,24 +29,57 @@ sProcess.nMinFiles   = 1;
 sProcess.Description = 'https://sites.google.com/site/giorgioarcara/erpr';
 % Definition of the options
 
-% === BASE
-sProcess.options.base.Comment = 'Base';
-sProcess.options.base.Type    = 'text';
-sProcess.options.base.Value   = '';
+% Decription of the files
+sProcess.options.ProcessDescr.Comment = ['The process will export according to the option selected.<BR>' ...
+    'If not blank, Options 2 overrides Option 1.<BR><BR>'];
+sProcess.options.ProcessDescr.Type    = 'label';
 
-% === TARGET
+
+% === OUTPUT NAME OPTION 1 number from condition
+% Substitute with Nan (explanation)
+sProcess.options.charsTitle.Comment = ['<B>OPTION 1: generate from Condition Name'];
+sProcess.options.charsTitle.Type    = 'label';
+
 sProcess.options.chars.Comment = 'Number of characters of Condition';
 sProcess.options.chars.Type    = 'value';
 sProcess.options.chars.Value   = {10, '', 0}; % the second number indicates the numbers after decimall separator.
 
-% === CHARS EXPLANATION
-sProcess.options.charstext.Comment = ['This value is overridden if the Base argument <BR>' ...
-    'is not empty' ];
-sProcess.options.charstext.Type    = 'label';
 
 % Separatore
 sProcess.options.separator2.Type = 'separator';
 sProcess.options.separator2.Comment = ' ';
+
+
+% === OUTPUT NAME OPTION 2 BASE
+
+% Substitute with Nan (explanation)
+sProcess.options.BaseTitle.Comment = ['<B>OPTION 2: Specify erpR ''base'' </B>'];
+sProcess.options.BaseTitle.Type    = 'label';
+
+sProcess.options.base.Comment = 'Base';
+sProcess.options.base.Type    = 'text';
+sProcess.options.base.Value   = '';
+
+
+% Determine. Numbers
+
+sProcess.options.Num.Comment = ['Determine erpR ''number'' from Brainstorm Subject Name' ];
+sProcess.options.Num.Type    = 'checkbox';
+sProcess.options.Num.Value   = 1;
+
+% Separatore
+sProcess.options.separator2.Type = 'separator';
+sProcess.options.separator2.Comment = ' ';
+
+
+sProcess.options.TrialTime.Comment = ['Add absolute time info in first line (!! Only single Trial)' ];
+sProcess.options.TrialTime.Type    = 'checkbox';
+sProcess.options.TrialTime.Value   = 0;
+
+
+% Separatore
+sProcess.options.separator3.Type = 'separator';
+sProcess.options.separator3.Comment = ' ';
 
 % Substitute with NaN
 sProcess.options.BadChans.Comment = 'Substitute Bad Channels with NaN';
@@ -57,6 +90,7 @@ sProcess.options.BadChans.Value   = 1;
 sProcess.options.Text.Comment = ['<B>Note</B>: Don''t uncheck this box, <BR>' ...
     'unless you know exactly what you are doing. <BR>' ];
 sProcess.options.Text.Type    = 'label';
+
 end
 
 
@@ -76,11 +110,13 @@ for i = 1:length(sInputs)
     
     sInput=sInputs(i); % get current file
     
+    
     %% DEFINE BASE
     % if a base value is supplied, specify base
     if ~strcmpi(sProcess.options.base.Value, '')
         
-        myCondName=sProcess.options.base.Value
+        myCondName=sProcess.options.base.Value;
+        
         
     else % otherwise use number of characters
         
@@ -94,13 +130,27 @@ for i = 1:length(sInputs)
         
     end;
     
-    % get Subject Name
-    Curr_Subj_Name=sInput.SubjectName;
     
-    % get Channel Data
-    ChannelData=in_bst_data(sInput.ChannelFile);
-    ChannelCell=struct2cell(ChannelData.Channel);
-    ChannelLabels=ChannelCell(1, :);
+    %% DEFINE NUMBER
+    % get Subject Name (if checkbox is checked)
+    if sProcess.options.Num.Value
+        Curr_Subj_Name=strcat('_', sInput.SubjectName);
+    else
+        Curr_Subj_Name='';
+    end
+    
+    %% GET STARTING TIME (IF CHECKBOX TRUE)
+    
+    if sProcess.options.TrialTime.Value
+        Trial_Time = get_starting_time_trial(sInput.FileName);
+    end;
+    %
+    
+    %% DEFINE EXPORT NAME (combination of condition and subject).
+    %export_name=strcat(myCondName, Curr_Subj_Name, '.txt');
+    
+    % small correction of export name (':' can give problems)
+    %export_name=strrep(export_name, ':', '_');
     
     % get number of average data, to understand if this is a single
     % trial or averaged data. the function is meant to be used with
@@ -109,14 +159,20 @@ for i = 1:length(sInputs)
     my_nAvg = in_bst_data(sInput.FileName, 'nAvg');
     my_nAvg_num= my_nAvg.nAvg; % my_nAvg is a struct. Get the number
     
-    %% case: Data
+    %% case: Data (Recordings)
     if strcmp(sInput.FileType, 'data');
         
         DataMat = in_bst_data(sInput.FileName, 'F', 'Time');
         % note: the ChannelFlag is automatically retrieved.
         
+        ChannelData=in_bst_data(sInput.ChannelFile);
+        Channel_ind = strcmp('Name', fields(ChannelData.Channel))
+        ChannelCell=struct2cell(ChannelData.Channel);
+        
+        ChannelLabels=ChannelCell(Channel_ind, :);
+        
         %get Bad Channels labels
-        myBadChans=ChannelLabels(DataMat.ChannelFlag==-1)
+        myBadChans=ChannelLabels(DataMat.ChannelFlag==-1);
         
         if sProcess.options.BadChans.Value
             DataMat.F(DataMat.ChannelFlag==-1,:)=NaN;
@@ -133,7 +189,7 @@ for i = 1:length(sInputs)
         
         DataMat = in_bst_data(sInput.FileName, 'TF', 'Time', 'RowNames', 'DataType');
         
-        %% case recordings or data 
+        %% case recordings or data
         % (I think that now are 'data' due to an update and 'recordings' is deprecated)
         if strcmp(DataMat.DataType, 'recordings')|strcmp(DataMat.DataType, 'data') ;
             
@@ -250,27 +306,59 @@ for i = 1:length(sInputs)
     end
     
     
+    % initialize empty string for n_trial_name, the name associated with the trial number. 
+    % Basically nothing will be added if the data are average (that is the
+    % normal condition with erpR).
+    
+    n_trial_name='';
+    
+    % DEPRECATED: add a warning, in case the function is used with single trials.
+    % the number of trial will be added to the name.
+    if (my_nAvg_num==1)
+        bst_report('Warning', sProcess, sInput, ['You exported a single trial (not an average)']);
+        
+        trial_comment = sInput.Comment;
+        % following lines extract the number from the comment string in
+        % bst. Not particularly elegant, but should work
+        % (better solve with a single regexp call)
+            
+        try
+            n_trial_name_temp1 = strsplit(trial_comment, '(#');
+            n_trial_name_temp2 = strsplit( n_trial_name_temp1{2}, ')' );
+            n_trial_name = ['_', n_trial_name_temp2{1}];
+        catch
+        end;
+        
+    end;
     
     
-    
-    % DEFINE EXPORT NAME (combination of condition and subject).
-    export_name=strcat(myCondName, '_', Curr_Subj_Name, '.txt');
+    %% DEFINE EXPORT NAME (combination of condition and subject).
+    export_name=strcat(myCondName, '_', Curr_Subj_Name, n_trial_name, '.txt');
     % small correction of export name (':' can give problems)
     export_name=strrep(export_name, ':', '_');
     
     
     
-    
-    % add a warning, in case the function is used with single trials.
-    if (my_nAvg_num==1)
-        bst_report('Warning', sProcess, sInput, ['This process is meant to be used with Averaged data. <BR>' ...
-            'This is a single trial']);
-    end;
-    
     % FIRST LINE COMMENT define the comment to be put in the file
     % (in the first line)-
     
     myComment =  Curr_Subj_Name;
+    
+    % in the case there is no Number in the first line (the Comment) the
+    % whole file name is written again (necessary to avoid problems with
+    % fprintf.
+    
+    if isempty(myComment)
+        myComment = export_name
+    end;
+    
+    
+    %% add trial time if checked
+    
+    if sProcess.options.TrialTime.Value
+        myComment = [myComment, '; Time = ', num2str(Trial_Time)];
+    end;
+
     
     fid = fopen(export_name, 'w');
     fprintf(fid, '%s ', myComment); % print comment (first row)
@@ -290,7 +378,36 @@ for i = 1:length(sInputs)
     
 end;
 
+%% function get_starting_time_trial(bst_trial_file)
+% This function takes as input the name of a bst trial and return the
+% absoulte time in the experiment. It is useful to sort trials.
+% 
+%
+% EXAMPLE:
+% filename = 'Subject01/sj0011_high_resample/data_S_20_trial002.mat'
+% 
+% Author: Giorgio Arcara
+%
+% Version: 14/01/2018
+%
+function trial_ini_t = get_starting_time_trial(bst_trial_file)
+trial_history = in_bst_data(bst_trial_file, 'History');
+trial_history = trial_history.History;
+
+% find cell row with import_time
+t = regexp(trial_history(:,2), 'import_time');
+% retrieve index
+ind = find(~cellfun(@isempty, t));
+% retrieve value
+trial_t = eval(trial_history{ind, 3});
+% retrieve only starting time (absolute).
+trial_ini_t = trial_t(1);
+%% NOTE: you can write this number as first line of the .txt as (to order in a second moment the trial in R).
+end;
+
 end
+
+
 
 
 
