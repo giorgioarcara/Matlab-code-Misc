@@ -1,0 +1,12 @@
+##############
+## GONDOLA ###
+##############
+
+version 0.1
+
+Gondola is released under GNU Genral Public License. 
+Gondola includes also some functions from external toolboxes:
+
+BrainNetViewer : GNU General Public License (GPL)
+Brainstorm: GNU General Public License (GPL)
+Network Based Statistics: GNU General Public License (GPL)
