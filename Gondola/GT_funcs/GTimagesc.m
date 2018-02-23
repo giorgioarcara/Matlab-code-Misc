@@ -38,7 +38,6 @@ tot_n = length(GTres);
 % define number of cols
 n_rows = round(length(GTres) / n_cols);
 
-set(gca, 'YTickLabel',[],'XTickLabel', []);
 
 figure
 for k = 1:length(GTres)
