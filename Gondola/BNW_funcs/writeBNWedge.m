@@ -13,18 +13,33 @@
 % Version: 12/01/2018
 
 
-function writeBNWedge(conn_mat, outdir);
+function writeBNWedge(conn_mat, varargin)
 
-if ~exist('outdir')
-    outdir = '';
-end;
+if nargin < 1
+  error('1 input is mandatory')
+elseif nargin == 1
+  outdir = '';
+elseif nargin == 2
+  outdir = varargin{1};
+end
 
-export_name=[outdir, 'BNW_edge.edge'];
+% check if the dir exists otherwise it creates it
+if ~exist(outdir, 'dir') && ~isempty(outdir)
+    mkdir(outdir);
+end
+
+% if ~exist(outdir)
+%     outdir = '';
+% end
+
+% export_name=[outdir, 'BNW_edge.edge'];
+export_name = fullfile(outdir, 'BNW_nodes.node');
+fprintf('*** export file *** %s \n', export_name);
 
 fid = fopen(export_name, 'w');
 
-for i=1:size(conn_mat, 1);%
+for i=1:size(conn_mat, 1)
     fprintf(fid, '%d\t', conn_mat(i,:)); % print Coord
     fprintf(fid, '\n', '');
-end;
+end
 fclose(fid);
