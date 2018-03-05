@@ -10,7 +10,7 @@
 % - resfield: the name of the field tha will be plotted.
 % - labelfield: the name of the field to title the subplot.
 % - n_cols: the number of cols of resulting image. The rows will be
-% determined as consequence
+% determined as consequencew
 % - clim: the colors (default is automatic and is taken from min and max of
 % all data). If "ind" is specified individual clim are made (based on
 % minimum and maximum of each subject.

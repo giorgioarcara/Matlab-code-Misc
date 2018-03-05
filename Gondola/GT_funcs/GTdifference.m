@@ -10,7 +10,6 @@
 % - resfields: the name of the fields that will be subtracted (GTres1 -
 % GTres2)
 % - otherfields: the other fields to be kept
-%  
 %
 % IMPORTANTE: The function will perform GTres1.resfield - GTres2.resfield
 %
@@ -29,21 +28,23 @@ function GTdiff = GTdifference(GTres1, GTres2, resfields, otherfields);
 
 GTdiff = struct();
 
-% first copy all the other fields
-for fn = otherfields
-    for isubj = 1:length(GTres1);
-        GTdiff(isubj).(fn{1}) = GTres1(isubj).(fn{1});
+if (exist('otherfields')&~isempty('otherfields'))
+    % first copy all the other fields
+    for fn = otherfields
+        for isubj = 1:length(GTres1);
+            GTdiff(isubj).(fn{1}) = GTres1(isubj).(fn{1});
+        end
     end
-end;
+end
+
 
 % now load the data
 for k=1:length(GTres1);
     for iField = 1:length(resfields);
-    GTdiff(k).(resfields{iField}) = GTres1(k).(resfields{iField}) - GTres2(k).(resfields{iField});
+        GTdiff(k).(resfields{iField}) = GTres1(k).(resfields{iField}) - GTres2(k).(resfields{iField});
     end;
     
 end;
-
 
 warning('Be sure that the two GTstruct have the subjects in the same order!')
 

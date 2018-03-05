@@ -10,6 +10,8 @@ SurfaceFile = '@default_subject/tess_cortex_pial_low.mat'
 
 [hFig iDS iFig] = view_surface_data(SurfaceFile, OverlayFile, 'MEG')
 
+% view surface only to display figure
+
 
 hFig.Position % edit the size of the figure
 
@@ -28,6 +30,8 @@ figure_3d_g('SetStandardView', hFig, 'Personal')
 
 hColorbar = findobj(hFig, '-depth', 1, 'Tag', 'Colorbar'); 
 delete(hColorbar)
+set(gcf,'PaperUnits','inches','PaperPosition',[0 0 40 16])
+print('Prova', '-djpeg', '-r0');
 
 
 

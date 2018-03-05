@@ -1,12 +1,13 @@
-%% GTres_rand = GTrandomize(GTres, resfield, iterations, function_name)
+%% GTres_rand = GTrandomize(GTres, resfield, iterations, measure_func)
 % 
 % This function start from a GTstruct object and create a null distribution
-% by randomizing 
+% by randomizing the matrices (with the randomizer_bin_und function from
+% BCT) and then computing a measure on these newled shuffled matrices.
+% it allows to estimate null results at single subject level.
 % 
 
-
-function GTres_rand = GTrandomize(GTres, resfield, iterations, function_name)
-myfunc = str2func(function_name);
+function GTres_rand = GTrandomize(GTres, resfield, iterations, measure_func)
+myfunc = str2func(measure_func);
 
 
 % Initialize matrix from the results of the first object
@@ -32,6 +33,8 @@ for iIter = 1:iterations
     curr_Ave = GTaverage(GTres_rand_curr, {'measure'});
     
     GTres_rand(:,:,iIter) = curr_Ave.measure;
+    
+    
         
 end;
 

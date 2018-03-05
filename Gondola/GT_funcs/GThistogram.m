@@ -14,7 +14,7 @@
 % - xlimits: if not speciied, the maximum across all subjets is used.
 %           If "ind" is specified individual xlim are made (based on
 %           minimum and maximum of each subject.
-% 
+%
 % - ylimits: if not speciied, [0, 100] is used.
 %           If "ind" is specified individual ylim are made (based on
 %           minimum and maximum of each subject.
@@ -52,36 +52,39 @@ figure
 for k = 1:length(GTres)
     
     subplot(n_rows, n_cols, k)
-
+    
     numOfBins = 20;
     [histFreq, histXout] = hist(GTres(k).(resfield)(:), numOfBins);
     bar(histXout, histFreq/sum(histFreq)*100);
- 
     
-    % define title in a loop (if several fields are supplied).
-    if (iscell(labelfields) & length(labelfields)>1)
-        panel_title =[];
-        for iF=1:length(labelfields)
-            panel_title = [panel_title,  ' ', eval(['GTres(', num2str(k), ').', labelfields{iF}])];
-        end;
-    else
-        panel_title =  eval(['GTres(', num2str(k), ').', labelfields]);
-    end
-    
-    title( panel_title );
+    if ~isempty(labelfields);
+        
+        % define title in a loop (if several fields are supplied).
+        if (iscell(labelfields) & length(labelfields)>1)
+            panel_title =[];
+            for iF=1:length(labelfields)
+                panel_title = [panel_title,  ' ', eval(['GTres(', num2str(k), ').', labelfields{iF}])];
+            end;
+        else
+            panel_title =  eval(['GTres(', num2str(k), ').', labelfields]);
+        end
+        
+        title( panel_title );
+        
+    end; % end if empty labels
     
     % unlss clim is 'ind' (i.e., individual) clim is modified on global.
-    if (~strcmpi('ind', xlimits)); 
+    if (~strcmpi('ind', xlimits));
         xlim(xlimits);
     end;
-    if (~strcmpi('ind', ylimits)); 
+    if (~strcmpi('ind', ylimits));
         ylim(ylimits);
     end;
     
     ylabel('%')
     set(get(gca,'ylabel'),'rotation',0)
-
-
+    
+    
     
 end;
 
