@@ -47,6 +47,12 @@ addParameter(p, 'ncols', default_ncols, @isnumeric);
 
 parse(p, GTres, varargin{:});
 
+nodefield = p.Results.nodefield;
+edgefield = p.Results.edgefield;
+labelfields = p.Results.labelfields;
+labels = p.Results.labels;
+
+
 % function a = findArea(width,varargin)
 %    defaultHeight = 1;
 %    defaultUnits = 'inches';
