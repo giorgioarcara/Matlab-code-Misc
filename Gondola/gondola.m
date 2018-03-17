@@ -8,7 +8,9 @@ curr_script_folder = fileparts(script_name);
 addpath(genpath([curr_script_folder]));
 
 fprintf('--- Gondola toolbox initialized ---\n');
-fprintf('Require: BCT toolbox\n');
+fprintf('Requires: BCT toolbox\n');
+fprintf('by: Giorgio Arcara, Annalisa Pascarella, Giovanni Pellegrino\n');
+
 
 
 ascii_art=['                                              &                              \n', ...

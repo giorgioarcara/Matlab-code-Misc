@@ -1,4 +1,4 @@
-%% GTpermute(GTstructcell, resfields, varargin)
+%% GTpermute_bet(GTstructcell, resfields, varargin)
 %
 % (BETWEEN SUBJECT PERMUTATION)
 % This function takes as input a cell with at least two GTres struct with single
@@ -23,7 +23,7 @@
 
 
 
-function GTpermcell = GTpermute(GTstructcell, resfields, varargin)
+function GTpermcell = GTpermute_bet(GTstructcell, resfields, varargin)
 
 % preliminary checks
 

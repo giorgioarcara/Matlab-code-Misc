@@ -64,7 +64,8 @@ for k = 1:length(GTres1)
     iPlot = iPlot + 1;
 
     
-    subplot(n_rows, 2, iPlot)
+    subplot(n_rows, 2, iPlot);
+
     
     %% PLOT IMAGE 1
     imagesc(GTres1(k).(resfield));
@@ -91,7 +92,7 @@ for k = 1:length(GTres1)
     %% SECOND COL
     iPlot = iPlot +1;
     
-    subplot(n_rows, 2, iPlot)
+    subplot(n_rows, 2, iPlot);
 
     %% PLOT IMAGE 1
     imagesc(GTres2(k).(resfield));
@@ -114,6 +115,15 @@ for k = 1:length(GTres1)
     set(gca, 'YTickLabel',[],'XTickLabel', []);
     
 end;
+
+%http://www.briandalessandro.com/blog/how-to-make-a-borderless-subplot-of-images-in-matlab/
+
+function h = subplottight(n,m,i)
+    [c,r] = ind2sub([m n], i);
+    ax = subplot('Position', [(c-1)/m, 1-(r)/n, 1/m, 1/n]);
+    if(nargout > 0)
+      h = ax;
+    end
 
 
 

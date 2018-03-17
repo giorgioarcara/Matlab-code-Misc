@@ -1,4 +1,4 @@
-% GTaverage(GTres, resfields, conditions)
+% GTaverage(GTres1, GTres2 resfields, otherfields)
 %
 % This function takes as input a GTres object (object with results from an analysis
 % with a script like BCT_analysis.m) and compute the average of the

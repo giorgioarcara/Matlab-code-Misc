@@ -1,7 +1,7 @@
-%% GTpermute2(GTstructcell, resfields, varargin)
+%% GTpermute_with(GTstruct1, GTstruct2, resfields, varargin)
 %
 % (WITHIN SUBJECT PERMUTATION)
-% This function takes as input a cell with EXACTLY two GTres struct with single
+% This function takes as input a cell with EXACTLY two GTres structs with single
 % subjects data. It considers each GTstruct as a repeated measures from the same group (betwithinween).
 % Each iteration (default = 1000) it shuffles the labels and computes a by
 % group average. It then return an object with the n=iterations Average computed with permutated labels.
@@ -10,7 +10,8 @@
 %
 % INPUT:
 %
-% - GTstructcell: a cell containing 2 GTstructs
+% - GTstruct1: the first GTstruct
+% - GTstruct2: the second GTstruct
 % - resfields: a cell with the fields of the GTstruct that should be used
 %              to calculated permuted average.
 % - iterations: number indicating the number of permutation (default is
@@ -25,7 +26,7 @@
 
 
 
-function GTperm = GTpermute(GTstruct1, GTstruct2, resfields, varargin)
+function GTperm = GTpermute_with(GTstruct1, GTstruct2, resfields, varargin)
 % preliminary checks
 
 if nargin < 3

@@ -31,12 +31,11 @@ end;
 % setup axis limits
 minv = min(min(resmat));
 maxv = max(max(resmat));
-resmat(isnan(resmat)) = minv-((maxv-minv)/5);
+minv = minv-((maxv-minv)/5)
 ddd=[0.8 0.8 0.8; jet(10)];
 
 % adjust axis in case only one value is supplied
 % caxis will not work with only one value.
-
 if (minv == maxv)
     maxv = (abs(resmat));
     minv = -(abs(resmat));
@@ -101,7 +100,12 @@ y=pos(2);
 %  CData containst tte matrix of all values.
 % in this way  I retrive the displayeed value
 % from the ordinal position pos(1) and pos(2)
+if x > 1 % case matrix
 value = round( event_obj.Target.CData(x, y), 2);
+elseif x ==1 % case vector
+    value = round( event_obj.Target.CData(y), 2);
+end;
+
 
 
 % Set output text

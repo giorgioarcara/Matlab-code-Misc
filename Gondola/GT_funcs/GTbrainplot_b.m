@@ -26,7 +26,47 @@
 
 
 
-function GTbrainplot(GTres, nodefield, edgefield, labelfields, Coords, n_cols, node_multi, brainpath, cmap, labels)
+function GTbrainplot_b(GTres, varargin); %labelfields, Coords, n_cols, node_multi, brainpath, cmap, labels)
+
+default_brainpath = 'Default/BrainMesh_ICBM152.nv';
+default_node_multi = 10/length(GTres);
+default_labels = 0;
+default_cmap=[1,0,0];
+default_ncols=length(GTres);
+default_nodefield=[];
+default_edgefield=[];
+
+p = inputParser;
+addRequired(p, 'GTres', @isstruct);
+addParameter(p, 'nodefield', default_nodefield,  @ischar);
+addParameter(p, 'edgefield', default_edgefield, @ischar);
+addParameter(p, 'labelfields', [], @iscell);
+addParameter(p, 'labels', default_labels, @iscell);
+addParameter(p, 'ncols', default_ncols, @isnumeric);
+
+
+parse(p, GTres, varargin{:});
+
+% function a = findArea(width,varargin)
+%    defaultHeight = 1;
+%    defaultUnits = 'inches';
+%    defaultShape = 'rectangle';
+%    expectedShapes = {'square','rectangle','parallelogram'};
+% 
+%    p = inputParser;
+%    validScalarPosNum = @(x) isnumeric(x) && isscalar(x) && (x > 0);
+%    addRequired(p,'width',validScalarPosNum);
+%    addOptional(p,'height',defaultHeight,validScalarPosNum);
+%    addParameter(p,'units',defaultUnits,@isstring);
+%    addParameter(p,'shape',defaultShape,...
+%                  @(x) any(validatestring(x,expectedShapes)));
+%    parse(p,width,varargin{:});
+%    
+%    a = p.Results.width*p.Results.height; 
+% end
+
+
+
 
 % load brain structure info
 
@@ -40,10 +80,6 @@ end;
 
 if ~exist('labels');
     labels = 0;
-end;
-
-if (~exist('cmap'))
-            cmap= [1, 0, 0];
 end;
 
 [vertex_number Braincoord ntri tri]=MF_load(brainpath);
@@ -90,10 +126,12 @@ for iSubj=1:length(GTres)
         text(Coords.xyz(:,1), Coords.xyz(:,2), Coords.xyz(:,3), Coords.labels);
         end;
         
-        % set colormap
-        colormap(cmap)
+        if (~exist('cmap'))
+            colormap ([1, 0, 0]);
+        else
+            colormap(cmap);
+        end;
         
-        % set view
         view(0, 90);
     end;
     
@@ -115,7 +153,7 @@ for iSubj=1:length(GTres)
     hold off
     
     % rotation won't change the size
-    %axis vis3d
+    axis vis3d
     % get rid of axis
     % set(gca, 'visible', 'off'); 
 
