@@ -32,17 +32,18 @@ default_brainpath = 'Default/BrainMesh_ICBM152.nv';
 default_node_multi = 10/length(GTres);
 default_labels = 0;
 default_cmap=[1,0,0];
-default_ncols=length(GTres);
+default_n_cols=length(GTres);
 default_nodefield=[];
 default_edgefield=[];
 
 p = inputParser;
 addRequired(p, 'GTres', @isstruct);
+addRequired(p, 'Coords', @isstruct);
 addParameter(p, 'nodefield', default_nodefield,  @ischar);
 addParameter(p, 'edgefield', default_edgefield, @ischar);
 addParameter(p, 'labelfields', [], @iscell);
 addParameter(p, 'labels', default_labels, @iscell);
-addParameter(p, 'ncols', default_ncols, @isnumeric);
+addParameter(p, 'n_cols', default_n_cols, @isnumeric);
 
 
 parse(p, GTres, varargin{:});
@@ -51,6 +52,8 @@ nodefield = p.Results.nodefield;
 edgefield = p.Results.edgefield;
 labelfields = p.Results.labelfields;
 labels = p.Results.labels;
+n_cols = p.Results.n_cols;
+Coords = p.Results.Coords;
 
 
 % function a = findArea(width,varargin)
@@ -159,7 +162,7 @@ for iSubj=1:length(GTres)
     hold off
     
     % rotation won't change the size
-    axis vis3d
+    %axis vis3d
     % get rid of axis
     % set(gca, 'visible', 'off'); 
 
