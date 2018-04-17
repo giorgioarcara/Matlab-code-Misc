@@ -1,4 +1,4 @@
-%% GTbrainplot(GTres, nodefield, edgefield, labelfields, Coords, n_cols, node_multi, brainpath, cmap, labels)
+%% GTbrainplot(GTres, nodefield, edgefield, labelfields, Coords, n_cols, node_multi, brainpath, cmap, labels, camview)
 %
 % This function plot graph informations (nodes and edges) as specified.
 % 
@@ -16,6 +16,7 @@
 %       - cmap: the colormap for nodes. If empty red nodes will be
 %       displayed
 %       - labels: logical, should labels be showed?.
+%       - camview: a 1x2 matrix with azimuth and elevation of cam view.
 %
 % by default the brain data is taken from a folder 'Default/BrainMesh_ICBM152.nv'
 % Coords are xyz of node coordinates.
@@ -26,7 +27,7 @@
 
 
 
-function GTbrainplot_b(GTres, varargin); %labelfields, Coords, n_cols, node_multi, brainpath, cmap, labels)
+function GTbrainplot_b(GTres, varargin); %labelfields, Coords, n_cols, node_multi, brainpath, cmap, labels, camview)
 
 default_brainpath = 'Default/BrainMesh_ICBM152.nv';
 default_node_multi = 10/length(GTres);
@@ -35,15 +36,19 @@ default_cmap=[1,0,0];
 default_n_cols=length(GTres);
 default_nodefield=[];
 default_edgefield=[];
+default_Coords=[];
+default_camview=[0, 90];
+
 
 p = inputParser;
 addRequired(p, 'GTres', @isstruct);
-addRequired(p, 'Coords', @isstruct);
+addParameter(p, 'Coords', default_Coords, @isstruct);
 addParameter(p, 'nodefield', default_nodefield,  @ischar);
 addParameter(p, 'edgefield', default_edgefield, @ischar);
 addParameter(p, 'labelfields', [], @iscell);
 addParameter(p, 'labels', default_labels, @iscell);
 addParameter(p, 'n_cols', default_n_cols, @isnumeric);
+addParameter(p, 'camview', default_camview, @isnumeric);
 
 
 parse(p, GTres, varargin{:});
@@ -54,7 +59,7 @@ labelfields = p.Results.labelfields;
 labels = p.Results.labels;
 n_cols = p.Results.n_cols;
 Coords = p.Results.Coords;
-
+camview = p.Results.camview;
 
 % function a = findArea(width,varargin)
 %    defaultHeight = 1;
@@ -99,7 +104,7 @@ tot_n = length(GTres);
 % define number of cols
 n_rows = round(length(GTres) / n_cols);
 
-figure
+figure('units','pixels','position',[0 0 1920 1080])
 
 for iSubj=1:length(GTres)
     
@@ -109,10 +114,11 @@ for iSubj=1:length(GTres)
     
     hold on
     
+    
     %% PLOT BRAIN
     Brainplot = trisurf(tri, Braincoord(1,:),Braincoord(2,:), Braincoord(3,:), 'FaceColor', [0.9, 0.9, 0.9],'EdgeColor','none', 'FaceAlpha', 0.9, 'EdgeAlpha', 0.9);
-    %camlight left;
-    %lighting phong
+    camlight left;
+    lighting phong
     alpha 0.3
     
     %% PLOT EDGES
@@ -141,7 +147,8 @@ for iSubj=1:length(GTres)
             colormap(cmap);
         end;
         
-        view(0, 90);
+        axis vis3d
+        view(camview(1), camview(2));
     end;
     
     %% PLOT title
@@ -162,9 +169,8 @@ for iSubj=1:length(GTres)
     hold off
     
     % rotation won't change the size
-    %axis vis3d
     % get rid of axis
-    % set(gca, 'visible', 'off'); 
+    set(gca, 'visible', 'off'); 
 
     
 end;

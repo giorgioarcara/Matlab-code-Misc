@@ -21,7 +21,7 @@ function sProcess = GetDescription() %#ok<DEFNU>
 sProcess.Comment     = 'export connectivity matrix in .mat format';
 sProcess.FileTag     = '';
 sProcess.Category    = 'Custom';
-sProcess.SubGroup    = 'File';
+sProcess.SubGroup    = 'Giorgio';
 sProcess.Index       = 1022;
 %sProcess.Description = 'http://neuroimage.usc.edu/brainstorm/SelectFiles#How_to_control_the_output_file_names';
 % Definition of the input accepted by this process

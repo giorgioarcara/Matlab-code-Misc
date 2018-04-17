@@ -12,7 +12,7 @@
 %
 % Version: 12/01/2018
 
-function [Design, contrast] = writeNBSDesign(n1, n2, outdir)
+function [Design, contr] = writeNBSDesign(n1, n2, outdir)
 
 if ~exist('outdir')
     outdir=''
