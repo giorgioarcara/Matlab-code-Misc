@@ -44,7 +44,12 @@ sProcess.options.channelfile.Value   = {...
     'single', ...                          % Selection mode: {single,multiple}
     'files_and_dirs', ...                  % Selection mode: {files,dirs,files_and_dirs}
     bst_get('FileFilters', 'channel'), ... % Get all the available file formats
-    'ChannelIn'};                          % DefaultFormats
+    'ChannelIn'};    % DefaultFormats
+
+sProcess.options.Explanation.Comment='NOTE: this process is meant to be used after the process export channel mat<BR>,...
+    ';
+sProcess.options.Explanation.Type='label';
+
 end
 
 
@@ -61,33 +66,23 @@ function OutputFiles = Run(sProcess, sInputs) %#ok<DEFNU>
 OutputFiles = [];
 
 NewChannelFile = sProcess.options.channelfile.Value{1};
+NewChannelMat = load(NewChannelFile, '-struct');
 % determine study names
 % CRUCIAL PART!!!
-sStudies = bst_get('Study', unique([sInputs.iStudy]));
+iStudies = unique([sInputs.iStudy]);
+sStudies = bst_get('Study', iStudies);
 
 
-for iInput = 1:length(sInputs)
+for iStudy = 1:length(sStudies)
     
-    % get current Study
-    curr_iStudy = sInputs(iInput).iStudy;
-    
-    curr_file = in_bst_data(sInputs(iInput).FileName, 'F');
-    Curr_Name = curr_file.F.comment;
-    
-    Channel = bst_get('ChannelForStudy',   curr_iStudy);
-    
-    if ~isempty(Channel)
-    ChannelFile = load(file_fullpath(Channel.FileName));    
-    % delete old CHannel file
-    delete(file_fullpath(Channel.FileName));
-    
-    
-    Channel_path = bst_fileparts(file_fullpath(Channel.FileName))
-    
-    % copy new Channel File
-    copyfile(NewChannelFile, Channel_path);
-
-    db_reload_studies(curr_iStudy);
+%     % get current Study
+      curr_iStudy = iStudies(iStudy)
+%     
+     Channel = bst_get('ChannelForStudy',   curr_iStudy);
+%     
+     bst_save(file_fullpath(Channel.FileName), NewChannelMat.ChannelFile, 'v6', 1);
+%     
+   
     
 end;
 

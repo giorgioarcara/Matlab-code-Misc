@@ -1,4 +1,4 @@
-function varargout = process_export_BAD( varargin )
+function varargout = process_export_erpR( varargin )
 % PROCESS_ADD_TAG: Add a comment tag.
 %
 % USAGE:     sProcess = process_export_erpR('GetDescription')
@@ -18,7 +18,7 @@ function sProcess = GetDescription() %#ok<DEFNU>
     sProcess.Comment     = 'export BAD trials';
     sProcess.FileTag     = '';
     sProcess.Category    = 'Custom';
-    sProcess.SubGroup    = 'File';
+    sProcess.SubGroup    = 'Giorgio';
     sProcess.Index       = 1021;
     %sProcess.Description = 'http://neuroimage.usc.edu/brainstorm/SelectFiles#How_to_control_the_output_file_names';
     % Definition of the input accepted by this process

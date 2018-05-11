@@ -1,4 +1,4 @@
-function varargout = process_export_sel( varargin )
+function varargout = process_export_erpR( varargin )
 % PROCESS_ADD_TAG: Add a comment tag.
 %
 % USAGE:     sProcess = process_export_erpR('GetDescription')
@@ -15,15 +15,15 @@ end
 %% ===== GET DESCRIPTION =====
 function sProcess = GetDescription() %#ok<DEFNU>
     % Description the process
-    sProcess.Comment     = 'export selected events';
+    sProcess.Comment     = 'export BAD trials';
     sProcess.FileTag     = '';
     sProcess.Category    = 'Custom';
-    sProcess.SubGroup    = 'File';
+    sProcess.SubGroup    = 'Giorgio';
     sProcess.Index       = 1021;
     %sProcess.Description = 'http://neuroimage.usc.edu/brainstorm/SelectFiles#How_to_control_the_output_file_names';
     % Definition of the input accepted by this process
-    sProcess.InputTypes  = {'data', 'raw'};
-    sProcess.OutputTypes = {'data', 'raw'};
+    sProcess.InputTypes  = {'data', 'results', 'timefreq', 'matrix'};
+    sProcess.OutputTypes = {'data', 'results', 'timefreq', 'matrix'};
     sProcess.nInputs     = 1;
     sProcess.nMinFiles   = 1;
     sProcess.Description = 'https://sites.google.com/site/giorgioarcara/erpr';
@@ -57,7 +57,7 @@ end
 %% ===== RUN =====
 function OutputFiles = Run(sProcess, sInputs) %#ok<DEFNU>
     
-     AllFiles = {sInputs.FileName};
+     OutputFiles = {sInputs.FileName};
      
      include_string = sProcess.options.include.Value;
      exclude_string = sProcess.options.exclude.Value;
@@ -69,24 +69,8 @@ function OutputFiles = Run(sProcess, sInputs) %#ok<DEFNU>
      % duplicati.
      sStudies = bst_get('Study', unique([sInputs.iStudy]));
 
-     event_sel='S 99'
 
       for s = 1:length(sStudies)
-          
-          % get current file
-          curr_file=in_bst_data(AllFiles{1});
-          
-          % get events labels
-          events_labels = {curr_file.F.events.label};
-          
-          % get index of desidered label
-          event_regexp= regexpi(events_labels, event_sel);
-          event_index=find(~cellfun(@isempty, event_index));
-
-          %%% NOTA GIORGIO: FERMO QUI
-          % da qui dovresti andare avanti recuperando il tempo degli eventi
-          % ed esportandoli
-          
           
           % select current study
           sStudy = sStudies(s);
