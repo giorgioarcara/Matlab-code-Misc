@@ -1,0 +1,1 @@
+ bst_report('Open', '/storages/LDATA/Arcara/NOPOSA_analysis/Reports/MMN_trial_rej/NP802_MMN_trials.mat')

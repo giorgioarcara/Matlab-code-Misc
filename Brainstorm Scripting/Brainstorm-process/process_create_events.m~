@@ -69,10 +69,6 @@ for iFile = 1:length(AllFiles)
     % get current file
     sRaw=in_bst_data(AllFiles{iFile});
     
-    % get timepoint duration (necessary after)
-    timepoint_dur = (sRaw.F.prop.sfreq);
-
-    
     for iTime = 1:length(EventsTimes)
         
         % check if label already exist otherwise create new.
