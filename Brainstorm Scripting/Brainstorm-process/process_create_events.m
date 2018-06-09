@@ -101,8 +101,7 @@ for iFile = 1:length(AllFiles)
             
         end;
         
-        
-        
+     
         
         %%%%%%%%  case new event %%%%%%%%%%%
         if ~any(strcmpi(newEventLab, labels))
