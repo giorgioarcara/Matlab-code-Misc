@@ -6,7 +6,7 @@ function varargout = process_export_erpR( varargin )
 
 % @=============================================================================
 %
-% Authors: Giorgio Arcara, 14/01/2018, version 0.95
+% Authors: Giorgio Arcara, 14/01/2018, version 0.951
 
 eval(macro_method);
 end
@@ -195,6 +195,14 @@ for i = 1:length(sInputs)
             
             % transpose data for erpR (in erpR is timepoints x channels, in bst channels x timepoints)
             % myData=DataMat.TF';
+            
+            % GET CHANNEL DATA
+            ChannelData=in_bst_data(sInput.ChannelFile);
+            Channel_ind = strcmp('Name', fields(ChannelData.Channel))
+            ChannelCell=struct2cell(ChannelData.Channel);
+            
+            ChannelLabels=ChannelCell(Channel_ind, :);
+            
             
             % GET BAD CHANNELS
             

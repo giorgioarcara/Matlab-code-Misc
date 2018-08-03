@@ -133,18 +133,18 @@ for iStudy = 1:length(sStudies)
         RowNames{iStudy} = sStudy.Name;
     end;
     
-    TrialsTable = array2table(TrialsCount);
-    
-    % adjust variable names to be suited to be table columns
-    temp_var_names = strcat('tr_', Trials_lab);
-    var_names = regexprep(temp_var_names, ' ', '_');
-    TrialsTable.Properties.VariableNames = var_names;
-    TrialsTable.Properties.RowNames = RowNames;
-    % export to workspace
-    assignin('base', 'TrialsTable', TrialsTable);
-    writetable(TrialsTable, 'TrialsTable.txt','delimiter', '\t', 'WriteRowNames',true);
-    
 end;
+
+TrialsTable = array2table(TrialsCount);
+
+% adjust variable names to be suited to be table columns
+temp_var_names = strcat('tr_', Trials_lab);
+var_names = regexprep(temp_var_names, ' ', '_');
+TrialsTable.Properties.VariableNames = var_names;
+TrialsTable.Properties.RowNames = RowNames;
+% export to workspace
+assignin('base', 'TrialsTable', TrialsTable);
+writetable(TrialsTable, 'TrialsTable.txt','delimiter', '\t', 'WriteRowNames',true);
 
 end
 

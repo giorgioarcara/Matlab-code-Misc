@@ -58,7 +58,7 @@ function OutputFiles = Run(sProcess, sInputs) %#ok<DEFNU>
 OutputFiles = {sInputs.FileName};
 
 events_lab_temp = sProcess.options.events.Value;
-events_lab = strsplit(events_lab_temp, ',');
+events_lab = strsplit(events_lab_temp, ', ');
 
 % initialize emtpy object (files x labels)
 EventsCount = zeros(length(sInputs), length(events_lab));

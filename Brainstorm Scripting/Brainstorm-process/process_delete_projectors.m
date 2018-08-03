@@ -1,8 +1,8 @@
-function varargout = process_rename_links( varargin )
-% PROCESS_EXPORT_EVENTS: export events in a .mat file.
+function varargout = process_delete_projectors( varargin )
+% PROCESS_import_EVENTS: import channel file .
 %
-% USAGE:     sProcess = process_rename_links('GetDescription')
-%                       process_rename_links('Run', sProcess, sInputs)
+% USAGE:     sProcess = process_import_channel('GetDescription')
+%                       process_import_channel('Run', sProcess, sInputs)
 
 % @=============================================================================
 %
@@ -15,7 +15,7 @@ end
 %% ===== GET DESCRIPTION =====
 function sProcess = GetDescription() %#ok<DEFNU>
 % Description the process
-sProcess.Comment     = 'Rename links of Raw files';
+sProcess.Comment     = 'delete projectors';
 sProcess.FileTag     = '';
 sProcess.Category    = 'Custom';
 sProcess.SubGroup    = 'Giorgio';
@@ -29,20 +29,8 @@ sProcess.nMinFiles   = 1;
 %sProcess.Description = 'https://sites.google.com/site/giorgioarcara/erpr';
 % Definition of the options
 % Instructions
-sProcess.options.Instructions.Comment='Change part of the path of Links to raw files';
+sProcess.options.Instructions.Comment='delete all existing projectors';
 sProcess.options.Instructions.Type='label';
-% Separator
-sProcess.options.separator2.Type = 'separator';
-sProcess.options.separator2.Comment = '';
-% === RAGET
-sProcess.options.orpath.Comment = 'original path';
-sProcess.options.orpath.Type    = 'text';
-sProcess.options.orpath.Value   = ''; % the second number indicates the numbers after decimall separator.
-
-sProcess.options.newpath.Comment = 'new path';
-sProcess.options.newpath.Type    = 'text';
-sProcess.options.nepath.Value   = '';
-
 
 end
 
@@ -57,27 +45,28 @@ end
 %% ===== RUN =====
 function OutputFiles = Run(sProcess, sInputs) %#ok<DEFNU>
 
-AllFiles = {sInputs.FileName};
+OutputFiles = [];
 
-OutputFiles = AllFiles;
+% CRUCIAL PART!!!
+iStudies = unique([sInputs.iStudy]);
+sStudies = bst_get('Study', iStudies);
 
-for iFile = 1:length(AllFiles)
+
+for iStudy = 1:length(sStudies)
     
-FileNames = {sFiles.FileName};
-
-iSubject=1
-
-Data = in_bst_data(FileNames{iSubject});
-
-Data.F.filename = regexprep(Data.F.filename, original_path, new_path);
-
-bst_save(file_fullpath(FileNames{iSubject}), Data, 'v6', 1);
-
-    
-    
+%     % get current Study
+      curr_iStudy = iStudies(iStudy)
+%     
+     Channel = bst_get('ChannelForStudy',   curr_iStudy);
+     
+     ChannelData = in_bst_data(Channel.FileName);
+     
+     ChannelData.Projector = [];
+%     
+     bst_save(file_fullpath(Channel.FileName), ChannelData, 'v6', 1);
+%   
 end;
 
 end
-
 
 
