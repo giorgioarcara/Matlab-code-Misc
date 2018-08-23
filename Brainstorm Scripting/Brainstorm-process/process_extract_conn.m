@@ -149,8 +149,8 @@ for iInput = 1:length(sInputs)
             NewData.History = Data.History;
             
             
-            % get path from current input
-            path =  bst_fileparts(file_fullpath(sInput.FileName));
+            % get path
+            path =  bst_fileparts(file_fullpath(NewData.DataFile));
             
             % save in the correct path
             t = datetime('now');

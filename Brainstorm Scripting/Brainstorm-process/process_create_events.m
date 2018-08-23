@@ -1,3 +1,4 @@
+
 function varargout = process_create_events( varargin )
 % PROCESS_EXPORT_EVENTS: export events in a .mat file.
 %
@@ -6,7 +7,7 @@ function varargout = process_create_events( varargin )
 
 % @=============================================================================
 %
-% Authors: Giorgio Arcara, 2018, version 0.1
+% Authors: Giorgio Arcara, 2018, version 0.2
 
 eval(macro_method);
 end
@@ -88,8 +89,8 @@ for iFile = 1:length(AllFiles)
             if length(EventsTimes{iTime})==2;
                 New_Event_times = [ EventsTimes{iTime}{1}; EventsTimes{iTime}{2}];
                 sRaw.F.events(lab_ind).times = [sRaw.F.events(lab_ind).times, New_Event_times];
-                New_Event_samples = [round(EventsTimes{iTime}{1}*timepoint_dur) round(EventsTimes{iTime}{1}*timepoint_dur)];
-                sRaw.F.events(lab_ind).samples = [sRaw.F.events(lab_ind).samples, New_Event_samples];
+                New_Event_samples = [round(EventsTimes{iTime}{1}*timepoint_dur); round(EventsTimes{iTime}{2}*timepoint_dur)];
+                sRaw.F.events(lab_ind).samples = [sRaw.F.events(lab_ind).samples New_Event_samples];
                 % case single event
             elseif length(EventsTimes{iTime})==1;
                 New_Event_times = [EventsTimes{iTime}{1}];
@@ -101,7 +102,8 @@ for iFile = 1:length(AllFiles)
             
         end;
         
-           
+     
+        
         %%%%%%%%  case new event %%%%%%%%%%%
         if ~any(strcmpi(newEventLab, labels))
             
@@ -113,7 +115,7 @@ for iFile = 1:length(AllFiles)
             % case extended event
             if length(EventsTimes{iTime})==2;
                 sRaw.F.events(end).times = [EventsTimes{iTime}{1}; EventsTimes{iTime}{2}];
-                sRaw.F.events(end).samples = [round(EventsTimes{iTime}{1}*timepoint_dur) round(EventsTimes{iTime}{1}*timepoint_dur)];
+                sRaw.F.events(end).samples = [round(EventsTimes{iTime}{1}*timepoint_dur); round(EventsTimes{iTime}{2}*timepoint_dur)];
                 % case single event
             elseif length(EventsTimes{iTime})==1;
                 sRaw.F.events(end).times = [EventsTimes{iTime}{1}];
@@ -130,6 +132,3 @@ for iFile = 1:length(AllFiles)
 end;
 
 end
-
-
-
