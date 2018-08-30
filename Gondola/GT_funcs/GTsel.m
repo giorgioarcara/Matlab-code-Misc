@@ -11,11 +11,7 @@
 % - values: an expression (also with logical) to select the fields.
 
 function GTres_sel = GTsel(GTres, field, values)
-
-if ~exist('num');
-    num = 0;
-end;
-    
+  
 fieldnames = fields(GTres);
 
 iField = strcmp(field, fieldnames);
@@ -24,13 +20,9 @@ GTcell = struct2cell(GTres);
 
 GTvalues = squeeze({GTcell{iField, :,:}});
 
-%if num==1
-%    GTvalues = cellfun(@num2str, GTvalues, 'UniformOutput', false);
-%end;
-
 % note I use the sel_files_bst to select, in the case values are a cell
 if ischar(values)
-[~ , ind_sel] =  sel_files_bst(GTvalues, values);
+[~ , ind_sel] =  sel_string(GTvalues, values);
 
 % a different way is what happen in the case of numeric
 elseif isnumeric(values)

@@ -14,6 +14,7 @@
 %                 calculate the measure.
 % - measure_name: the name of the new measure (it will be the name of the
 %                  field in the output).
+% - opts : options, if necessary for gt measure.
 %
 % Author: Giorgio Arcara
 %

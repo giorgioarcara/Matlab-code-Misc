@@ -10,9 +10,10 @@
 % - struct2: the second struct to be merged
 %
 %
+%
 % Author: Giorgio Arcara
 %
-% version: 29/08/2018
+% version: 18/08/2018
 %
 %
 
@@ -28,12 +29,10 @@ end;
 
 FieldNames = fieldnames(GTstruct2);
 
-GTstruct1_table = struct2table(GTstruct1);
-GTstruct2_table = struct2table(GTstruct2);
+GTstruct1_cell = struct2cell(GTstruct1);
+GTstruct2_cell = struct2cell(GTstruct2);
 
-GTstruct_table = [GTstruct1_table, GTstruct2_table];
-
-GTstruct = table2struct(GTstruct_table);
+GTstruct
 
     
 end
