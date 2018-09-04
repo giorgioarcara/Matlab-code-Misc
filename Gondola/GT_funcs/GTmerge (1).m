@@ -1,13 +1,13 @@
-% StructMerge(struct1, struct2)
+% GTmerge(GTstruct1, GTstruct2)
 %
-% This function merge two structs. It assumes that the structs have
+% This function merge two GTres struct. It assumes that the structs have
 % the same number of elements that refers to the same observations.
 % The fields of the second struct will be added to the first
 %
 %
 % INPUT
-% - struct1: the first struct to be merged
-% - struct2: the second struct to be merged
+% - GTstruct1: the first GT struct to be merged
+% - GTstruct2: the second GT struct to be merged
 %
 %
 %
@@ -24,16 +24,17 @@ if nargin < 2
 end
 
 if (length(GTstruct1) ~= length(GTstruct2))
-    error('The two structs must have the same length');
+    error('The two structs must have the same dimension');
 end;
 
 FieldNames = fieldnames(GTstruct2);
 
-GTstruct1_cell = struct2cell(GTstruct1);
-GTstruct2_cell = struct2cell(GTstruct2);
+% initialize output
+GTstruct=GTstruct1;
 
-GTstruct
-
+for iField = 1:length(FieldNames)
+    
+    GTstruct.(FieldNames{iField}) = GTstruct2.(FieldNames{iField});
     
 end
 
