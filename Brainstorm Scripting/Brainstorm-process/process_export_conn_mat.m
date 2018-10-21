@@ -199,7 +199,7 @@ for i = 1:length(sInputs)
     export_name=strrep(export_name, ' ', '_'); % get rid of spaces
 
     
-    save(export_name, 'Conn');
+    save(export_name, '-struct', 'Conn');
     
 end;
 

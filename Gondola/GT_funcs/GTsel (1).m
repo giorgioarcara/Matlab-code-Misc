@@ -1,8 +1,7 @@
-%% GTsel(GTres, FreqField, value, DataField, value);
+%% GTsel(GTres, field, value, num);
 %
-% This function start from a GT struct. It selects the data fields based on
-% the selection of a Freq.
-
+% This function select all field based on a value found in a field.
+% Call the functions multiple times to perform selection on more than one
 % field
 %
 % INPUT: 
@@ -11,24 +10,12 @@
 % - field: the field for the selection
 % - values: an expression (also with logical) to select the fields.
 
-function GTres = GTFreqsel(GTres, varargin)
+function GTres_sel = GTsel(GTres, field, values)
 
-% part to check if, in a given group
-p = inputParser;
-addParameter(p, 'FreqField', [], @iscell);
-addParameter(p, 'DataField', [], @iscell);
-addParameter(p, 'DataPath', [], @ischar);
-
-
-parse(p, varargin{:});
-
-StructFields = p.Results.StructFields;
-ResFields =  p.Results.ResFields;
-DataPath =  p.Results.DataPath;
-
-
-
-
+if ~exist('num');
+    num = 0;
+end;
+    
 fieldnames = fields(GTres);
 
 iField = strcmp(field, fieldnames);
@@ -37,9 +24,13 @@ GTcell = struct2cell(GTres);
 
 GTvalues = squeeze({GTcell{iField, :,:}});
 
+%if num==1
+%    GTvalues = cellfun(@num2str, GTvalues, 'UniformOutput', false);
+%end;
+
 % note I use the sel_files_bst to select, in the case values are a cell
 if ischar(values)
-[~ , ind_sel] =  sel_string(GTvalues, values);
+[~ , ind_sel] =  sel_files_bst(GTvalues, values);
 
 % a different way is what happen in the case of numeric
 elseif isnumeric(values)

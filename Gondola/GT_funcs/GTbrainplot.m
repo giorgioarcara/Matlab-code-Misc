@@ -66,8 +66,8 @@ for iSubj=1:length(GTres)
     
     %% PLOT BRAIN
     Brainplot = trisurf(tri, Braincoord(1,:),Braincoord(2,:), Braincoord(3,:), 'FaceColor', [0.9, 0.9, 0.9],'EdgeColor','none', 'FaceAlpha', 0.9, 'EdgeAlpha', 0.9);
-    %camlight left;
-    %lighting phong
+    camlight left;
+    lighting phong
     alpha 0.3
     
     %% PLOT EDGES
@@ -115,9 +115,9 @@ for iSubj=1:length(GTres)
     hold off
     
     % rotation won't change the size
-    %axis vis3d
-    %get rid of axis
-    %set(gca, 'visible', 'off'); 
+    axis vis3d
+    get rid of axis
+    set(gca, 'visible', 'off'); 
 
     
 end;

@@ -1,4 +1,3 @@
-
 function varargout = process_create_events( varargin )
 % PROCESS_EXPORT_EVENTS: export events in a .mat file.
 %
@@ -7,7 +6,7 @@ function varargout = process_create_events( varargin )
 
 % @=============================================================================
 %
-% Authors: Giorgio Arcara, 2018, version 0.2
+% Authors: Giorgio Arcara, 2018, version 0.3
 
 eval(macro_method);
 end
@@ -72,7 +71,7 @@ for iFile = 1:length(AllFiles)
     
     % get timepoint duration (necessary after)
     timepoint_dur = (sRaw.F.prop.sfreq);
-
+    
     
     for iTime = 1:length(EventsTimes)
         
@@ -98,11 +97,11 @@ for iFile = 1:length(AllFiles)
                 New_Event_samples = [round(EventsTimes{iTime}{1}*timepoint_dur)];
                 sRaw.F.events(lab_ind).samples = [sRaw.F.events(lab_ind).samples, New_Event_samples];
             end;
-                 
+            
             
         end;
         
-     
+        
         
         %%%%%%%%  case new event %%%%%%%%%%%
         if ~any(strcmpi(newEventLab, labels))
@@ -110,7 +109,6 @@ for iFile = 1:length(AllFiles)
             % create new Label
             sRaw.F.events(end+1).label =newEventLab;
             sRaw.F.events(end).color = [1 0.6000 0];
-            sRaw.F.events(end).epochs = 1;
             
             % case extended event
             if length(EventsTimes{iTime})==2;
@@ -126,8 +124,13 @@ for iFile = 1:length(AllFiles)
             
         end;
         
-        bst_save(file_fullpath(AllFiles{iFile}), sRaw, 'v6', 1);
     end;
+    
+    
+    lab_ind = find(strcmpi(newEventLab, labels));
+    sRaw.F.events(lab_ind).epochs = repmat(1, 1, length(sRaw.F.events(lab_ind).times));
+    
+    bst_save(file_fullpath(AllFiles{iFile}), sRaw, 'v6', 1);
     
 end;
 
