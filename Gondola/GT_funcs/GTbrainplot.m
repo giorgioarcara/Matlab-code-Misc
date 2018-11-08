@@ -59,6 +59,8 @@ figure
 for iSubj=1:length(GTres)
     
     subplot(n_rows, n_cols, iSubj)
+    %subplot_tight(n_rows, n_cols, iSubj, .05)
+
     
     %Brainplot = plot3(coord(1,:),coord(2,:), coord(3,:), '.', 'MarkerSize', 1e-28, 'color', [0.99 0.99 0.99]);
     
@@ -66,8 +68,8 @@ for iSubj=1:length(GTres)
     
     %% PLOT BRAIN
     Brainplot = trisurf(tri, Braincoord(1,:),Braincoord(2,:), Braincoord(3,:), 'FaceColor', [0.9, 0.9, 0.9],'EdgeColor','none', 'FaceAlpha', 0.9, 'EdgeAlpha', 0.9);
-    camlight left;
-    lighting phong
+    %camlight left;
+    %lighting phong
     alpha 0.3
     
     %% PLOT EDGES
@@ -116,7 +118,7 @@ for iSubj=1:length(GTres)
     
     % rotation won't change the size
     axis vis3d
-    get rid of axis
+    %get rid of axis
     set(gca, 'visible', 'off'); 
 
     

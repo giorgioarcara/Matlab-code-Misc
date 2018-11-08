@@ -42,8 +42,7 @@ n_rows = round(length(GTres) / n_cols);
 figure
 for k = 1:length(GTres)
     
-    subplot(n_rows, n_cols, k)
-    
+    subplot_tight(n_rows, n_cols, k, .05)
     imagesc(GTres(k).(resfield));
     colorbar
     
@@ -54,10 +53,10 @@ for k = 1:length(GTres)
             panel_title = [panel_title,  ' ', GTres(k).(labelfields{iF})];
         end;
     else
-        panel_title =  GTres(k).(labelfields);
+        panel_title =  GTres(k).(labelfields{1});
     end
     
-    title( panel_title );
+    title( panel_title, 'FontSize', 20);
     
     % unlss clim is 'ind' (i.e., individual) clim is modified on global.
     if (~strcmpi('ind', clim)); 

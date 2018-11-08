@@ -38,6 +38,8 @@ for iK = 1:length(GTstruct)
     thresh =  prctile(temp, perc); % calculate percentile
     GTres_thresh(iK).(thresh_fieldname) = threshold_absolute(GTstruct(iK).(resfield), thresh);
     GTres_thresh(iK).thresh = thresh;
+    GTres_thresh(iK).perc = perc;
+
 end;
 
 
