@@ -117,7 +117,7 @@ for iSubj=1:length(GTres)
     hold off
     
     % rotation won't change the size
-    axis vis3d
+    %axis vis3d
     %get rid of axis
     set(gca, 'visible', 'off'); 
 
