@@ -6,7 +6,7 @@ function varargout = process_export_erpR( varargin )
 
 % @=============================================================================
 %
-% Authors: Giorgio Arcara, 14/01/2018, version 0.951
+% Authors: Giorgio Arcara, 26/04/2020, version 0.96
 
 eval(macro_method);
 end
@@ -61,6 +61,10 @@ sProcess.options.base.Type    = 'text';
 sProcess.options.base.Value   = '';
 
 
+% Separatore
+sProcess.options.separator3.Type = 'separator';
+sProcess.options.separator3.Comment = ' ';
+
 % Determine. Numbers
 
 sProcess.options.Num.Comment = ['Determine erpR ''number'' from Brainstorm Subject Name' ];
@@ -76,15 +80,26 @@ sProcess.options.TrialTime.Comment = ['Add absolute time info in first line (!! 
 sProcess.options.TrialTime.Type    = 'checkbox';
 sProcess.options.TrialTime.Value   = 0;
 
+sProcess.options.ScoutName.Comment = ['Fix Scout names' ];
+sProcess.options.ScoutName.Type    = 'checkbox';
+sProcess.options.ScoutName.Value   = 1;
+
 
 % Separatore
 sProcess.options.separator3.Type = 'separator';
 sProcess.options.separator3.Comment = ' ';
 
 % Substitute with NaN
+sProcess.options.FreqVec.Comment = 'Add vector with Frequencies (check this only for PSD or FT)';
+sProcess.options.FreqVec.Type    = 'checkbox';
+sProcess.options.FreqVec.Value   = 1;
+
+
+% Substitute with NaN
 sProcess.options.BadChans.Comment = 'Substitute Bad Channels with NaN';
 sProcess.options.BadChans.Type    = 'checkbox';
 sProcess.options.BadChans.Value   = 1;
+
 
 % Substitute with Nan (explanation)
 sProcess.options.Text.Comment = ['<B>Note</B>: Don''t uncheck this box, <BR>' ...
@@ -124,7 +139,7 @@ for i = 1:length(sInputs)
         % the end will be the minimum between the actual length and the
         % number supplied with Condition numbers
         
-        end_myCondName=min([length(sInput.Comment), sProcess.options.chars.Value{1}])
+        end_myCondName=min([length(sInput.Comment), sProcess.options.chars.Value{1}]);
         
         myCondName = sInput.Comment(1: end_myCondName); % get the length of Condition name from options
         
@@ -166,7 +181,7 @@ for i = 1:length(sInputs)
         % note: the ChannelFlag is automatically retrieved.
         
         ChannelData=in_bst_data(sInput.ChannelFile);
-        Channel_ind = strcmp('Name', fields(ChannelData.Channel))
+        Channel_ind = strcmp('Name', fields(ChannelData.Channel));
         ChannelCell=struct2cell(ChannelData.Channel);
         
         ChannelLabels=ChannelCell(Channel_ind, :);
@@ -187,7 +202,10 @@ for i = 1:length(sInputs)
     %% case: TimeFreq (recordings)
     if strcmp(sInput.FileType, 'timefreq')
         
-        DataMat = in_bst_data(sInput.FileName, 'TF', 'Time', 'RowNames', 'DataType');
+        DataMat = in_bst_data(sInput.FileName, 'TF', 'Time', 'RowNames', 'DataType', 'Method', 'Freqs');
+        
+        % squeeze in case there is a singleton dimension
+        DataMat.TF = squeeze(DataMat.TF);
         
         %% case recordings or data
         % (I think that now are 'data' due to an update and 'recordings' is deprecated)
@@ -216,7 +234,7 @@ for i = 1:length(sInputs)
                 ChanData = in_bst_data(sInput.DataFile, 'ChannelFlag');
                 
                 % get Bad Channels labels
-                myBadChans=ChannelLabels(ChanData.ChannelFlag==-1)
+                myBadChans=ChannelLabels(ChanData.ChannelFlag==-1);
                 
                 if sProcess.options.BadChans.Value
                     DataMat.TF(ChanData.ChannelFlag==-1,:)=NaN;
@@ -258,17 +276,20 @@ for i = 1:length(sInputs)
                     
                     [~, Ichans] = intersect(ChannelLabels, electrodes, 'stable')
                     
-                    tempDataMat(Ichans,:) = DataMat.TF;
+                    tempDataMat(Ichans,:) = squeeze(DataMat.TF);
                     
                     %% transpose data for erpR (in erpR is timepoints x channels, in bst channels x timepoints)
                     myData = tempDataMat';
                     
                 else
                     % transpose data for erpR (in erpR is timepoints x channels, in bst channels x timepoints)
-                    myData = DataMat.TF';
                 end
                 
             end;
+            % for both single trial cases and average case
+            myData = DataMat.TF';
+            
+            
         end;
         
         
@@ -288,6 +309,22 @@ for i = 1:length(sInputs)
             myBadChans=[];
         end;
         
+        % case psd and ft add frequency vector (only for psd and ft)
+        if (strcmp(DataMat.Method, 'psd')|strcomp(DataMat.Method, 'ft'))
+            
+            ChannelLabels=DataMat.RowNames; %overwrite preceding calculated ChannelLabels
+            
+            % insert Frequency vector as first column (only for psd and tf).
+            if sProcess.options.FreqVec.Value
+                
+                ChannelLabels = ['Freqs', ChannelLabels]; % not
+                myData=[DataMat.Freqs' myData]; % add Freqs as first column
+                
+            end;
+            
+        end;
+        
+        
         
     end;
     
@@ -302,6 +339,13 @@ for i = 1:length(sInputs)
         % Define Channel labels
         ChannelLabels=DataMat.Description;
         
+        if sProcess.options.ScoutName.Value 
+            ChanLab_ind =  regexp(ChannelLabels, '\.'); % i use the \. cause it is the first symbol before the added name
+            for iChan = 1:length(ChannelLabels)
+                or_lab = ChannelLabels{iChan};
+                ChannelLabels{iChan} = or_lab(1: (ChanLab_ind{iChan}(1)-1) ); % the -1 is to avoid that the "." will be included in the name
+            end;
+        end;
         
         %set Bad Channels labels to empty.
         % in matrix files, Bad Channels has no meaning (no fixed number
@@ -314,7 +358,7 @@ for i = 1:length(sInputs)
     end
     
     
-    % initialize empty string for n_trial_name, the name associated with the trial number. 
+    % initialize empty string for n_trial_name, the name associated with the trial number.
     % Basically nothing will be added if the data are average (that is the
     % normal condition with erpR).
     
@@ -329,7 +373,7 @@ for i = 1:length(sInputs)
         % following lines extract the number from the comment string in
         % bst. Not particularly elegant, but should work
         % (better solve with a single regexp call)
-            
+        
         try
             n_trial_name_temp1 = strsplit(trial_comment, '(#');
             n_trial_name_temp2 = strsplit( n_trial_name_temp1{2}, ')' );
@@ -344,6 +388,8 @@ for i = 1:length(sInputs)
     export_name=strcat(myCondName, '_', Curr_Subj_Name, n_trial_name, '.txt');
     % small correction of export name (':' can give problems)
     export_name=strrep(export_name, ':', '_');
+    export_name=strrep(export_name, '/', '_');
+    
     
     
     
@@ -366,7 +412,7 @@ for i = 1:length(sInputs)
     if sProcess.options.TrialTime.Value
         myComment = [myComment, '; Time = ', num2str(Trial_Time)];
     end;
-
+    
     
     fid = fopen(export_name, 'w');
     fprintf(fid, '%s ', myComment); % print comment (first row)
@@ -389,30 +435,30 @@ end;
 %% function get_starting_time_trial(bst_trial_file)
 % This function takes as input the name of a bst trial and return the
 % absoulte time in the experiment. It is useful to sort trials.
-% 
+%
 %
 % EXAMPLE:
 % filename = 'Subject01/sj0011_high_resample/data_S_20_trial002.mat'
-% 
+%
 % Author: Giorgio Arcara
 %
 % Version: 14/01/2018
 %
-function trial_ini_t = get_starting_time_trial(bst_trial_file)
-trial_history = in_bst_data(bst_trial_file, 'History');
-trial_history = trial_history.History;
-
-% find cell row with import_time
-t = regexp(trial_history(:,2), 'import_time');
-% retrieve index
-ind = find(~cellfun(@isempty, t));
-% retrieve value
-trial_t = eval(trial_history{ind, 3});
-% retrieve only starting time (absolute).
-trial_ini_t = trial_t(1);
-%% NOTE: you can write this number as first line of the .txt as (to order in a second moment the trial in R).
-end;
-
+    function trial_ini_t = get_starting_time_trial(bst_trial_file)
+        trial_history = in_bst_data(bst_trial_file, 'History');
+        trial_history = trial_history.History;
+        
+        % find cell row with import_time
+        t = regexp(trial_history(:,2), 'import_time');
+        % retrieve index
+        ind = find(~cellfun(@isempty, t));
+        % retrieve value
+        trial_t = eval(trial_history{ind, 3});
+        % retrieve only starting time (absolute).
+        trial_ini_t = trial_t(1);
+        %% NOTE: you can write this number as first line of the .txt as (to order in a second moment the trial in R).
+    end;
+    
 end
 
 
