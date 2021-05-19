@@ -6,7 +6,7 @@ function varargout = process_export_erpR( varargin )
 
 % @=============================================================================
 %
-% Authors: Giorgio Arcara, 26/04/2020, version 0.96
+% Authors: Giorgio Arcara, 19/03/2021, version 0.991
 
 eval(macro_method);
 end
@@ -44,6 +44,10 @@ sProcess.options.chars.Comment = 'Number of characters of Condition';
 sProcess.options.chars.Type    = 'value';
 sProcess.options.chars.Value   = {10, '', 0}; % the second number indicates the numbers after decimall separator.
 
+sProcess.options.tag.Comment = 'add tag to auto generated base';
+sProcess.options.tag.Type    = 'text';
+sProcess.options.tag.Value   = ''; %
+
 
 % Separatore
 sProcess.options.separator2.Type = 'separator';
@@ -60,10 +64,17 @@ sProcess.options.base.Comment = 'Base';
 sProcess.options.base.Type    = 'text';
 sProcess.options.base.Value   = '';
 
-
 % Separatore
 sProcess.options.separator3.Type = 'separator';
 sProcess.options.separator3.Comment = ' ';
+
+sProcess.options.FileInfo.Comment = 'add file info (in first line of file)';
+sProcess.options.FileInfo.Type    = 'text';
+sProcess.options.FileInfo.Value   = '';
+
+% Separatore
+sProcess.options.separator4.Type = 'separator';
+sProcess.options.separator4.Comment = ' ';
 
 % Determine. Numbers
 
@@ -80,7 +91,7 @@ sProcess.options.TrialTime.Comment = ['Add absolute time info in first line (!! 
 sProcess.options.TrialTime.Type    = 'checkbox';
 sProcess.options.TrialTime.Value   = 0;
 
-sProcess.options.ScoutName.Comment = ['Fix Scout names' ];
+sProcess.options.ScoutName.Comment = ['Fix Scout names (!! check this only if you are using scouts)' ]; % this is incessary for those cases in which the Scout Name is modified adding the file name 
 sProcess.options.ScoutName.Type    = 'checkbox';
 sProcess.options.ScoutName.Value   = 1;
 
@@ -89,10 +100,19 @@ sProcess.options.ScoutName.Value   = 1;
 sProcess.options.separator3.Type = 'separator';
 sProcess.options.separator3.Comment = ' ';
 
-% Substitute with NaN
+% add vector with frequencies
 sProcess.options.FreqVec.Comment = 'Add vector with Frequencies (check this only for PSD or FT)';
 sProcess.options.FreqVec.Type    = 'checkbox';
 sProcess.options.FreqVec.Value   = 1;
+
+% Substitute with NaN
+sProcess.options.TFave.Comment = 'Average TimeFreq data (check you are using avereage of TF)';
+sProcess.options.TFave.Type    = 'checkbox';
+sProcess.options.TFave.Value   = 0;
+
+sProcess.options.StudyName.Comment = 'Add study name to export name';
+sProcess.options.StudyName.Type    = 'checkbox';
+sProcess.options.StudyName.Value   = 0;
 
 
 % Substitute with NaN
@@ -142,6 +162,9 @@ for i = 1:length(sInputs)
         end_myCondName=min([length(sInput.Comment), sProcess.options.chars.Value{1}]);
         
         myCondName = sInput.Comment(1: end_myCondName); % get the length of Condition name from options
+        
+        % and add tag if present
+        myCondName = [myCondName, sProcess.options.tag.Value];
         
     end;
     
@@ -206,17 +229,17 @@ for i = 1:length(sInputs)
         
         % squeeze in case there is a singleton dimension
         DataMat.TF = squeeze(DataMat.TF);
-        
+
         %% case recordings or data
         % (I think that now are 'data' due to an update and 'recordings' is deprecated)
-        if strcmp(DataMat.DataType, 'recordings')|strcmp(DataMat.DataType, 'data') ;
+        if strcmp(DataMat.DataType, 'recordings')|strcmp(DataMat.DataType, 'data') &  sProcess.options.TFave.Value==0;
             
             % transpose data for erpR (in erpR is timepoints x channels, in bst channels x timepoints)
             % myData=DataMat.TF';
             
             % GET CHANNEL DATA
             ChannelData=in_bst_data(sInput.ChannelFile);
-            Channel_ind = strcmp('Name', fields(ChannelData.Channel))
+            Channel_ind = strcmp('Name', fields(ChannelData.Channel));
             ChannelCell=struct2cell(ChannelData.Channel);
             
             ChannelLabels=ChannelCell(Channel_ind, :);
@@ -276,6 +299,8 @@ for i = 1:length(sInputs)
                     
                     [~, Ichans] = intersect(ChannelLabels, electrodes, 'stable')
                     
+                    %
+                    
                     tempDataMat(Ichans,:) = squeeze(DataMat.TF);
                     
                     %% transpose data for erpR (in erpR is timepoints x channels, in bst channels x timepoints)
@@ -310,15 +335,57 @@ for i = 1:length(sInputs)
         end;
         
         % case psd and ft add frequency vector (only for psd and ft)
-        if (strcmp(DataMat.Method, 'psd')|strcomp(DataMat.Method, 'ft'))
+        if (strcmp(DataMat.Method, 'psd')|strcmp(DataMat.Method, 'ft')|sProcess.options.TFave.Value==1)
+            
+                    
+        % case in which you want to disregard time (cause average is used).
+        if(sProcess.options.TFave.Value==1)
+            DataMat.TF=DataMat.TF(:,1,:); % this is to take only the first timepoint in the case of PSD
+        end
+        
+            
+            myData = squeeze(DataMat.TF)';
+            
             
             ChannelLabels=DataMat.RowNames; %overwrite preceding calculated ChannelLabels
             
             % insert Frequency vector as first column (only for psd and tf).
+            
+            
             if sProcess.options.FreqVec.Value
                 
-                ChannelLabels = ['Freqs', ChannelLabels]; % not
+                
+                % fix channel name for psd
+                if sProcess.options.ScoutName.Value
+                    ChanLab_ind =  regexp(ChannelLabels, '\.|@.'); % i use the \. cause it is the first symbol before the added name (it happens sometimes after extraction). @ is in the case of Group analysis.
+                    for iChan = 1:length(ChannelLabels)
+                        or_lab = ChannelLabels{iChan};
+                        ChannelLabels{iChan} = or_lab(1: (ChanLab_ind{iChan}(1)-1) ); % the -1 is to avoid that the "." will be included in the name
+                    end;
+                end;
+                
+                % the next few lines are necessary to make this function
+                % works in two cases with PSDon channels and with PSDon
+                % sources. This is because ChannelLabels object has
+                % different dimensions in the two cases (a row vector or a
+                % col vector). The check of size use the appropriate
+                % orientation to combine with the Colname 'Freq1' to be
+                % added in the export file.
+                if size(ChannelLabels, 1) == 1
+                    ChannelLabels = ['Freqs', ChannelLabels];
+                elseif size(ChannelLabels,2) == 1
+                    ChannelLabels = ['Freqs', ChannelLabels'];
+                end;
+                
                 myData=[DataMat.Freqs' myData]; % add Freqs as first column
+                
+                myBadChans=[];
+                %set Bad Channels labels to be empty.
+                % in matrix files, Bad Channels has no meaning (no fixed number
+                % of sensor/channels are assumed)
+                
+
+                
                 
             end;
             
@@ -339,8 +406,8 @@ for i = 1:length(sInputs)
         % Define Channel labels
         ChannelLabels=DataMat.Description;
         
-        if sProcess.options.ScoutName.Value 
-            ChanLab_ind =  regexp(ChannelLabels, '\.'); % i use the \. cause it is the first symbol before the added name
+        if sProcess.options.ScoutName.Value
+            ChanLab_ind =  regexp(ChannelLabels, '\.|@.'); % i use the \. cause it is the first symbol before the added name (it happens sometimes after extraction). @ is in the case of Group analysis
             for iChan = 1:length(ChannelLabels)
                 or_lab = ChannelLabels{iChan};
                 ChannelLabels{iChan} = or_lab(1: (ChanLab_ind{iChan}(1)-1) ); % the -1 is to avoid that the "." will be included in the name
@@ -390,6 +457,11 @@ for i = 1:length(sInputs)
     export_name=strrep(export_name, ':', '_');
     export_name=strrep(export_name, '/', '_');
     
+    if sProcess.options.StudyName.Value
+        
+        export_name = [sInput.Condition, '_', export_name];
+        
+    end;
     
     
     
@@ -420,6 +492,7 @@ for i = 1:length(sInputs)
         fprintf(fid, '%s', 'BAD CHANS: ');
         fprintf(fid, '%s; ', myBadChans{:});
     end;
+    fprintf(fid, '%s', sProcess.options.FileInfo.Value);
     fprintf(fid, '\n', '');
     fprintf(fid, '%s\t', ChannelLabels{:}); % print channel labels (second row)
     fprintf(fid, '\n', '');

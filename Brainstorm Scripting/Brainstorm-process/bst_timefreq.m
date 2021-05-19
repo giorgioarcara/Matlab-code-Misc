@@ -86,11 +86,11 @@ OPTIONS = struct_copy_fields(OPTIONS, Def_OPTIONS, 0);
 % Check if the signal processing toolbox is available
 UseSigProcToolbox = bst_get('UseSigProcToolbox');
 
-%% GIORGIO. SET TO 1 to use ITC (and calculate session)
+%% GIORGIO. SET TO 1 to use ITPC (and calculate session)
 if 1
 
-OPTIONS.Measure         = 'ITC';
-fprintf(' !!!!! ----- ATTENZIONE ----- !!! stai usando una versione modificata di timefreq\n')
+OPTIONS.Measure         = 'ITPC';
+fprintf(' !!!!! ----- WARNING ----- !!! you are using a modified version of bst_fimefreq\n')
 
 end;
 
@@ -720,7 +720,7 @@ if isAverage
     end
     
     %% GIORGIO 
-       if strcmp(OPTIONS.Measure, 'ITC') %% GIORGIO, in case of ITC use abs.
+       if strcmp(OPTIONS.Measure, 'ITPC') %% GIORGIO, in case of ITC use abs.
         TF_avg = abs(TF_avg);
          end;
     %
