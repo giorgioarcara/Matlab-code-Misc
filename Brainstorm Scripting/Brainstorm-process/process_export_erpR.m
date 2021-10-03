@@ -6,7 +6,7 @@ function varargout = process_export_erpR( varargin )
 
 % @=============================================================================
 %
-% Authors: Giorgio Arcara, 19/03/2021, version 0.991
+% Authors: Giorgio Arcara, 26/06/2021, version 0.992
 
 eval(macro_method);
 end
@@ -91,7 +91,7 @@ sProcess.options.TrialTime.Comment = ['Add absolute time info in first line (!! 
 sProcess.options.TrialTime.Type    = 'checkbox';
 sProcess.options.TrialTime.Value   = 0;
 
-sProcess.options.ScoutName.Comment = ['Fix Scout names (!! check this only if you are using scouts)' ]; % this is incessary for those cases in which the Scout Name is modified adding the file name 
+sProcess.options.ScoutName.Comment = ['Fix Scout names (!! check this only if you are using scouts)' ]; % this is incessary for those cases in which the Scout Name is modified adding the file name
 sProcess.options.ScoutName.Type    = 'checkbox';
 sProcess.options.ScoutName.Value   = 1;
 
@@ -229,7 +229,7 @@ for i = 1:length(sInputs)
         
         % squeeze in case there is a singleton dimension
         DataMat.TF = squeeze(DataMat.TF);
-
+        
         %% case recordings or data
         % (I think that now are 'data' due to an update and 'recordings' is deprecated)
         if strcmp(DataMat.DataType, 'recordings')|strcmp(DataMat.DataType, 'data') &  sProcess.options.TFave.Value==0;
@@ -308,11 +308,12 @@ for i = 1:length(sInputs)
                     
                 else
                     % transpose data for erpR (in erpR is timepoints x channels, in bst channels x timepoints)
+                    % for both single trial cases and average case
+                    myData = DataMat.TF';
+                    
                 end
                 
             end;
-            % for both single trial cases and average case
-            myData = DataMat.TF';
             
             
         end;
@@ -337,12 +338,12 @@ for i = 1:length(sInputs)
         % case psd and ft add frequency vector (only for psd and ft)
         if (strcmp(DataMat.Method, 'psd')|strcmp(DataMat.Method, 'ft')|sProcess.options.TFave.Value==1)
             
-                    
-        % case in which you want to disregard time (cause average is used).
-        if(sProcess.options.TFave.Value==1)
-            DataMat.TF=DataMat.TF(:,1,:); % this is to take only the first timepoint in the case of PSD
-        end
-        
+            
+            % case in which you want to disregard time (cause average is used).
+            if(sProcess.options.TFave.Value==1)
+                DataMat.TF=DataMat.TF(:,1,:); % this is to take only the first timepoint in the case of PSD
+            end
+            
             
             myData = squeeze(DataMat.TF)';
             
@@ -384,7 +385,7 @@ for i = 1:length(sInputs)
                 % in matrix files, Bad Channels has no meaning (no fixed number
                 % of sensor/channels are assumed)
                 
-
+                
                 
                 
             end;
